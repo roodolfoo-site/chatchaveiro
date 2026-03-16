@@ -13,7 +13,7 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "chat.html"))
 })
 
-const OPENAI_API_KEY = "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"
+const OPENAI_API_KEY = "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"
 
 app.post("/chat", async (req, res) => {
 
@@ -35,22 +35,24 @@ Você é Thais, atendente simpática de uma central de chaveiro 24h.
 Cliente disse:
 ${pergunta}
 
-Responda curto e peça o endereço.
+Responda de forma curta, simpática e peça o endereço do local.
 `
       })
     })
 
     const data = await resposta.json()
 
+    console.log("RESPOSTA OPENAI:", data)
+
     const respostaIA =
-      data.output?.[0]?.content?.[0]?.text ||
+      data.output_text ||
       "Estou verificando 👍"
 
     res.json({ reply: respostaIA })
 
   } catch (erro) {
 
-    console.log(erro)
+    console.log("ERRO OPENAI:", erro)
 
     res.json({
       reply: "Estou verificando 👍"
