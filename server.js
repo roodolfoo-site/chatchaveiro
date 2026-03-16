@@ -8,64 +8,88 @@ const app = express()
 
 app.use(express.json())
 
-/* servir arquivos */
+/* arquivos estáticos */
+
 app.use(express.static(__dirname))
 
 /* rota principal */
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "chat.html"))
+
+app.get("/", (req,res)=>{
+res.sendFile(path.join(__dirname,"chat.html"))
 })
 
-/* ========================= */
-/* CHAT */
-/* ========================= */
+/* ================= */
+/* CONFIG            */
+/* ================= */
 
-const OPENAI_API_KEY = "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"
+const OPENAI_API_KEY = "SUA_API_KEY_AQUI"
 
-app.post("/chat", async (req, res) => {
+/* ================= */
+/* CHAT              */
+/* ================= */
 
-  const pergunta = req.body.message
+app.post("/chat", async (req,res)=>{
 
-  try {
+const pergunta = req.body.message
 
-    const resposta = await fetch(
-      "https://api.openai.com/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${OPENAI_API_KEY}`
-        },
-        body: JSON.stringify({
-          model: "gpt-4o-mini",
-          messages: [
-            { role: "system", content: "Você é Thais da central de chaveiros." },
-            { role: "user", content: pergunta }
-          ]
-        })
-      }
-    )
+try{
 
-    const data = await resposta.json()
+const resposta = await fetch(
+"https://api.openai.com/v1/chat/completions",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json",
+Authorization:`Bearer ${OPENAI_API_KEY}`
+},
+body:JSON.stringify({
 
-    res.json({
-      reply: data.choices[0].message.content
-    })
+model:"gpt-4o-mini",
 
-  } catch (err) {
+messages:[
+{
+role:"system",
+content:"Você é Thais, atendente simpática de uma central de chaveiro 24h. Sempre entenda o problema do cliente e peça o endereço."
+},
+{
+role:"user",
+content:pergunta
+}
+],
 
-    res.json({
-      reply: "Estou verificando 👍"
-    })
+temperature:0.7,
+max_tokens:120
 
-  }
+})
+}
+)
+
+const data = await resposta.json()
+
+const respostaIA =
+data.choices?.[0]?.message?.content ||
+"Estou verificando 👍"
+
+res.json({reply:respostaIA})
+
+}catch(err){
+
+console.log(err)
+
+res.json({
+reply:"Estou verificando 👍"
+})
+
+}
 
 })
 
-/* ========================= */
+/* ================= */
+/* SERVER            */
+/* ================= */
 
 const PORT = process.env.PORT || 3000
 
-app.listen(PORT, () => {
-  console.log("Servidor rodando")
+app.listen(PORT,()=>{
+console.log("Servidor rodando")
 })
