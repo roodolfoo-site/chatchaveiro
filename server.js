@@ -22,7 +22,7 @@ res.sendFile(path.join(__dirname,"chat.html"))
 /* CONFIG            */
 /* ================= */
 
-const OPENAI_API_KEY = "SUA_API_KEY_AQUI"
+const OPENAI_API_KEY = "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"
 
 /* ================= */
 /* CHAT              */
