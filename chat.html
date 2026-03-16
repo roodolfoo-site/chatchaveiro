@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+
+<meta charset="UTF-8">
+<title>Atendimento</title>
+
+<style>
+
+*{
+box-sizing:border-box;
+}
+
+body{
+font-family:"Segoe UI", Arial, sans-serif;
+background:#d1d7db;
+margin:0;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+/* container */
+
+.chat-container{
+width:380px;
+height:92vh;
+display:flex;
+flex-direction:column;
+background:#efeae2;
+border-radius:12px;
+box-shadow:0 8px 30px rgba(0,0,0,0.25);
+overflow:hidden;
+}
+
+/* header */
+
+.header{
+background:#075E54;
+color:white;
+padding:12px;
+display:flex;
+align-items:center;
+}
+
+/* avatar */
+
+.avatar{
+width:42px;
+height:42px;
+border-radius:50%;
+overflow:hidden;
+margin-right:10px;
+position:relative;
+}
+
+.avatar img{
+width:140%;
+height:140%;
+object-fit:cover;
+object-position:60% 30%;
+}
+
+/* bolinha online */
+
+.avatar::after{
+content:"";
+width:10px;
+height:10px;
+background:#25D366;
+border-radius:50%;
+position:absolute;
+bottom:2px;
+right:2px;
+border:2px solid #075E54;
+}
+
+/* nome */
+
+.name{
+font-size:14px;
+font-weight:600;
+}
+
+.status{
+font-size:11px;
+opacity:0.8;
+}
+
+/* chat */
+
+.messages{
+flex:1;
+padding:15px;
+overflow-y:auto;
+background-image:url("whats-fundo.jpg");
+background-size:280px;
+}
+
+/* mensagens */
+
+.msg{
+max-width:75%;
+padding:10px 14px;
+margin-bottom:14px;
+border-radius:10px;
+font-size:14px;
+line-height:1.4;
+position:relative;
+box-shadow:0 1px 1px rgba(0,0,0,0.15);
+animation:fade 0.2s ease;
+}
+
+/* animação */
+
+@keyframes fade{
+from{opacity:0; transform:translateY(5px);}
+to{opacity:1; transform:translateY(0);}
+}
+
+/* bot */
+
+.bot{
+background:white;
+border-top-left-radius:0;
+}
+
+.bot::before{
+content:"";
+position:absolute;
+left:-6px;
+top:0;
+border-width:6px;
+border-style:solid;
+border-color:white transparent transparent transparent;
+}
+
+/* usuario */
+
+.user{
+background:#d9fdd3;
+margin-left:auto;
+border-top-right-radius:0;
+}
+
+.user::before{
+content:"";
+position:absolute;
+right:-6px;
+top:0;
+border-width:6px;
+border-style:solid;
+border-color:#d9fdd3 transparent transparent transparent;
+}
+
+/* hora */
+
+.time{
+font-size:11px;
+color:#667781;
+text-align:right;
+margin-top:4px;
+}
+
+/* input */
+
+.input-area{
+display:flex;
+padding:10px;
+background:#f0f2f5;
+align-items:center;
+}
+
+input{
+flex:1;
+padding:10px 14px;
+border-radius:20px;
+border:1px solid #ddd;
+font-size:14px;
+outline:none;
+background:white;
+}
+
+button{
+margin-left:8px;
+padding:10px 18px;
+background:#25D366;
+border:none;
+color:white;
+border-radius:20px;
+cursor:pointer;
+font-weight:600;
+transition:0.2s;
+}
+
+button:hover{
+background:#1ebe5d;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="chat-container">
+
+<div class="header">
+
+<div class="avatar">
+<img src="atendente.jpg">
+</div>
+
+<div>
+<div class="name">Thais - Atendimento</div>
+<div class="status">online agora</div>
+</div>
+
+</div>
+
+<div id="messages" class="messages"></div>
+
+<div class="input-area">
+<input id="text" placeholder="Digite sua mensagem">
+<button onclick="send()">Enviar</button>
+</div>
+
+</div>
+
+<script src="app.js"></script>
+
+<script>
+
+function hora(){
+
+const agora=new Date()
+
+let h=agora.getHours().toString().padStart(2,"0")
+let m=agora.getMinutes().toString().padStart(2,"0")
+
+return h+":"+m
+
+}
+
+/* mensagem inicial */
+
+window.onload=function(){
+
+const messages=document.getElementById("messages")
+
+const msg=document.createElement("div")
+msg.className="msg bot"
+
+msg.innerHTML="Olá 👋 Sou a Thais da central de atendimento.<br><br>O que aconteceu com sua chave ou fechadura?<div class='time'>"+hora()+"</div>"
+
+messages.appendChild(msg)
+
+messages.scrollTop=messages.scrollHeight
+
+}
+
+/* ENTER */
+
+document.addEventListener("DOMContentLoaded",function(){
+
+const input=document.getElementById("text")
+
+input.addEventListener("keypress",function(e){
+
+if(e.key==="Enter"){
+send()
+}
+
+})
+
+})
+
+</script>
+
+</body>
+</html>
