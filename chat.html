@@ -112,8 +112,6 @@ box-shadow:0 1px 1px rgba(0,0,0,0.15);
 animation:fade 0.2s ease;
 }
 
-/* animação */
-
 @keyframes fade{
 from{opacity:0; transform:translateY(5px);}
 to{opacity:1; transform:translateY(0);}
@@ -191,7 +189,6 @@ color:white;
 border-radius:20px;
 cursor:pointer;
 font-weight:600;
-transition:0.2s;
 }
 
 button:hover{
@@ -228,8 +225,6 @@ background:#1ebe5d;
 
 </div>
 
-<script src="app.js"></script>
-
 <script>
 
 function hora(){
@@ -255,6 +250,55 @@ msg.className="msg bot"
 msg.innerHTML="Olá 👋 Sou a Thais da central de atendimento.<br><br>O que aconteceu com sua chave ou fechadura?<div class='time'>"+hora()+"</div>"
 
 messages.appendChild(msg)
+
+messages.scrollTop=messages.scrollHeight
+
+}
+
+/* enviar mensagem */
+
+async function send(){
+
+const input=document.getElementById("text")
+const messages=document.getElementById("messages")
+
+const texto=input.value.trim()
+
+if(!texto) return
+
+const msgUser=document.createElement("div")
+msgUser.className="msg user"
+msgUser.innerHTML=texto+"<div class='time'>"+hora()+"</div>"
+
+messages.appendChild(msgUser)
+
+messages.scrollTop=messages.scrollHeight
+
+input.value=""
+
+/* chamar servidor */
+
+const resposta=await fetch("/chat",{
+
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+message:texto
+})
+
+})
+
+const data=await resposta.json()
+
+const msgBot=document.createElement("div")
+msgBot.className="msg bot"
+
+msgBot.innerHTML=data.reply+"<div class='time'>"+hora()+"</div>"
+
+messages.appendChild(msgBot)
 
 messages.scrollTop=messages.scrollHeight
 
