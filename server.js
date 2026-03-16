@@ -9,17 +9,11 @@ const app = express()
 app.use(express.json())
 app.use(express.static(__dirname))
 
-/* rota principal */
-
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "chat.html"))
 })
 
-/* API KEY vem do Render */
-
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY
-
-/* rota do chat */
 
 app.post("/chat", async (req, res) => {
 
@@ -27,7 +21,7 @@ app.post("/chat", async (req, res) => {
 
   try {
 
-    const resposta = await fetch("https://api.openai.com/v1/responses", {
+    const resposta = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -35,26 +29,26 @@ app.post("/chat", async (req, res) => {
       },
       body: JSON.stringify({
         model: "gpt-4o-mini",
-        input: `
-Você é Thais, atendente simpática de uma central de chaveiro 24h.
-
-Cliente disse:
-${pergunta}
-
-Responda de forma curta, simpática e peça o endereço do local.
-`
+        messages: [
+          {
+            role: "system",
+            content: "Você é Thais, atendente simpática de uma central de chaveiro 24h. Sempre responda curto e peça o endereço do cliente."
+          },
+          {
+            role: "user",
+            content: pergunta
+          }
+        ]
       })
     })
 
     const data = await resposta.json()
 
-    console.log("RESPOSTA OPENAI:", data)
+    console.log("OPENAI RESPONSE:", data)
 
-    let respostaIA = "Estou verificando 👍"
-
-    if (data.output_text) {
-      respostaIA = data.output_text
-    }
+    const respostaIA =
+      data.choices?.[0]?.message?.content ||
+      "Estou verificando 👍"
 
     res.json({ reply: respostaIA })
 
@@ -69,8 +63,6 @@ Responda de forma curta, simpática e peça o endereço do local.
   }
 
 })
-
-/* servidor */
 
 const PORT = process.env.PORT || 3000
 
