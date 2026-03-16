@@ -9,11 +9,17 @@ const app = express()
 app.use(express.json())
 app.use(express.static(__dirname))
 
+/* rota principal */
+
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "chat.html"))
 })
 
-const OPENAI_API_KEY = "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"
+/* API KEY vem do Render */
+
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY
+
+/* rota do chat */
 
 app.post("/chat", async (req, res) => {
 
@@ -44,9 +50,11 @@ Responda de forma curta, simpática e peça o endereço do local.
 
     console.log("RESPOSTA OPENAI:", data)
 
-    const respostaIA =
-      data.output_text ||
-      "Estou verificando 👍"
+    let respostaIA = "Estou verificando 👍"
+
+    if (data.output_text) {
+      respostaIA = data.output_text
+    }
 
     res.json({ reply: respostaIA })
 
@@ -61,6 +69,8 @@ Responda de forma curta, simpática e peça o endereço do local.
   }
 
 })
+
+/* servidor */
 
 const PORT = process.env.PORT || 3000
 
