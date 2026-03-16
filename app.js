@@ -33,12 +33,10 @@ function identificarServico(msg){
 
 msg=msg.toLowerCase()
 
-/* abertura */
-
 if(
+msg.includes("perdi") ||
 msg.includes("chave dentro") ||
 msg.includes("chave no carro") ||
-msg.includes("chave no veiculo") ||
 msg.includes("trancado") ||
 msg.includes("me tranquei") ||
 msg.includes("abrir") ||
@@ -47,41 +45,24 @@ msg.includes("porta travou")
 return "abertura"
 }
 
-/* perdeu chave */
-
-if(
-msg.includes("perdi") ||
-msg.includes("perdeu") ||
-msg.includes("sumiu chave")
-){
-return "abertura"
-}
-
-/* copia */
-
 if(
 msg.includes("copiar") ||
 msg.includes("copia") ||
-msg.includes("segunda chave") ||
-msg.includes("fazer chave")
+msg.includes("segunda chave")
 ){
 return "copia"
 }
-
-/* conserto */
 
 if(
 msg.includes("quebrou") ||
 msg.includes("miolo") ||
 msg.includes("fechadura") ||
-msg.includes("conserto") ||
-msg.includes("travou")
+msg.includes("conserto")
 ){
 return "conserto"
 }
 
 return null
-
 }
 
 
@@ -92,46 +73,19 @@ function identificarTipo(msg){
 
 msg=msg.toLowerCase()
 
-if(
-msg.includes("carro") ||
-msg.includes("veiculo") ||
-msg.includes("automovel")
-){
-return "automotivo"
-}
-
-if(
-msg.includes("casa") ||
-msg.includes("apartamento") ||
-msg.includes("porta")
-){
-return "residencial"
-}
-
-if(
-msg.includes("empresa") ||
-msg.includes("loja") ||
-msg.includes("comercio")
-){
-return "comercial"
-}
+if(msg.includes("carro") || msg.includes("veiculo")) return "automotivo"
+if(msg.includes("casa") || msg.includes("apartamento")) return "residencial"
+if(msg.includes("empresa") || msg.includes("loja")) return "comercial"
 
 return null
-
 }
 
 
 
-/* VALOR DO SERVIÇO */
+/* VALOR */
 
 function calcularValorServico(tipo){
-
-if(tipo==="automotivo"){
-return 180
-}
-
-return 120
-
+return tipo==="automotivo" ? 180 : 120
 }
 
 
@@ -139,14 +93,8 @@ return 120
 /* HORA */
 
 function hora(){
-
 const agora=new Date()
-
-let h=agora.getHours().toString().padStart(2,"0")
-let m=agora.getMinutes().toString().padStart(2,"0")
-
-return h+":"+m
-
+return agora.getHours().toString().padStart(2,"0")+":"+agora.getMinutes().toString().padStart(2,"0")
 }
 
 function scrollChat(){
@@ -158,53 +106,30 @@ messages.scrollTop=messages.scrollHeight
 /* MENSAGENS */
 
 function addUserMessage(text){
-
 const msg=document.createElement("div")
-
 msg.className="msg user"
-
 msg.innerHTML=text+`<div class="time">${hora()}</div>`
-
 messages.appendChild(msg)
-
 scrollChat()
-
 }
 
 function addBotMessage(text){
-
 const msg=document.createElement("div")
-
 msg.className="msg bot"
-
 msg.innerHTML=text+`<div class="time">${hora()}</div>`
-
 messages.appendChild(msg)
-
 scrollChat()
-
 }
 
-
-
-/* MENSAGEM COM FOTO */
-
 function addBotImage(text){
-
 const msg=document.createElement("div")
-
 msg.className="msg bot"
-
 msg.innerHTML=`
 <img src="tecnico.jpg" style="width:100%;border-radius:8px;margin-bottom:6px;">
 ${text}
-<div class="time">${hora()}</div>
-`
-
+<div class="time">${hora()}</div>`
 messages.appendChild(msg)
-
 scrollChat()
-
 }
 
 
@@ -212,38 +137,20 @@ scrollChat()
 /* DIGITAÇÃO */
 
 function typing(){
-
 const msg=document.createElement("div")
-
 msg.className="msg bot typing-box"
-
-msg.innerHTML=`
-<div class="typing">
-<span></span>
-<span></span>
-<span></span>
-</div>
-`
-
+msg.innerHTML=`<div class="typing"><span></span><span></span><span></span></div>`
 messages.appendChild(msg)
-
 scrollChat()
-
 return msg
-
 }
 
 function responder(texto){
-
 const t=typing()
-
 setTimeout(()=>{
-
 t.remove()
 addBotMessage(texto)
-
 },1200)
-
 }
 
 
@@ -253,11 +160,9 @@ addBotMessage(texto)
 async function send(){
 
 const texto=input.value.trim()
-
 if(!texto) return
 
 addUserMessage(texto)
-
 input.value=""
 
 const msg=texto.toLowerCase()
@@ -272,48 +177,37 @@ const servico=identificarServico(msg)
 
 if(!servico){
 
-responder("Entendi 👍 Para direcionar o técnico corretamente preciso entender o serviço.")
-
-setTimeout(()=>{
-addBotMessage("Você precisa de abertura, conserto ou cópia de chave?")
-},1500)
-
+responder("Entendi 👍 me diga se é abertura, conserto ou cópia de chave.")
 return
-
 }
 
 cliente.servico=servico
 
 const tipoDetectado=identificarTipo(msg)
 
-responder("Entendi 👍 vamos resolver isso para você.")
+responder("Entendi 👍 vamos resolver isso agora.")
 
-/* se já detectou local */
+/* já sabe local */
 
 if(tipoDetectado){
-
 cliente.tipoLocal=tipoDetectado
 
 setTimeout(()=>{
-addBotMessage("Pode me informar o endereço do local?")
+addBotMessage("Pode me informar o endereço completo? (rua e número)")
 },1500)
 
 etapa="endereco"
-
 return
-
 }
 
 /* perguntar tipo */
 
 setTimeout(()=>{
-addBotMessage("Esse serviço é residencial, comercial ou automotivo?")
+addBotMessage("Esse atendimento é em casa, empresa ou veículo?")
 },1500)
 
 etapa="tipo_local"
-
 return
-
 }
 
 
@@ -327,13 +221,11 @@ cliente.tipoLocal=texto
 responder("Perfeito 👍")
 
 setTimeout(()=>{
-addBotMessage("Pode me informar o endereço do local?")
+addBotMessage("Pode me informar o endereço completo? (rua e número)")
 },1500)
 
 etapa="endereco"
-
 return
-
 }
 
 
@@ -342,18 +234,26 @@ return
 
 if(etapa==="endereco"){
 
+/* valida numero */
+
+if(!texto.match(/\d+/)){
+responder("Preciso do endereço completo para localizar o técnico.")
+setTimeout(()=>{
+addBotMessage("Pode informar rua e número?")
+},1500)
+return
+}
+
 cliente.endereco=texto
 
-responder("Perfeito 👍")
+responder("Perfeito 👍 já localizei sua região.")
 
 setTimeout(()=>{
 addBotMessage("Qual é o seu nome?")
 },1500)
 
 etapa="nome"
-
 return
-
 }
 
 
@@ -367,13 +267,11 @@ cliente.nome=texto
 responder(`Prazer ${cliente.nome} 😊`)
 
 setTimeout(()=>{
-addBotMessage("Agora me informe seu telefone 📞 para contato.")
+addBotMessage("Agora me informe seu telefone 📞")
 },1500)
 
 etapa="telefone"
-
 return
-
 }
 
 
@@ -385,49 +283,32 @@ if(etapa==="telefone"){
 cliente.telefone=texto
 
 tecnicoAtual=tecnicos[0]
-
 tempoChegada=tempos[Math.floor(Math.random()*tempos.length)]
 
-const valorServico = calcularValorServico(cliente.tipoLocal)
+const valor=calcularValorServico(cliente.tipoLocal)
 
 responder("Perfeito 👍")
 
 setTimeout(()=>{
-addBotMessage("Vou verificar um técnico disponível próximo de você...")
+addBotMessage("Já encontrei um técnico próximo de você.")
 },1500)
 
 setTimeout(()=>{
-addBotMessage("Só um momento enquanto verifico aqui...")
-},3000)
-
-setTimeout(()=>{
-
-addBotMessage("Tenho um técnico finalizando um atendimento próximo do seu endereço.")
-
-setTimeout(()=>{
-
-addBotImage(`✔ Técnico confirmado<br><br>
+addBotImage(`✔ Técnico disponível<br><br>
 Nome: ${tecnicoAtual.nome}<br>
-Valor do serviço: R$${valorServico}`)
+Valor: R$${valor}`)
+},3500)
 
 setTimeout(()=>{
-
-addBotMessage(`Ele consegue chegar em aproximadamente ${tempoChegada}.`)
+addBotMessage(`Ele chega em aproximadamente ${tempoChegada}.`)
+},5500)
 
 setTimeout(()=>{
-addBotMessage("Deseja que eu reserve esse técnico para você agora?")
-},2000)
-
-},2000)
-
-},2000)
-
-},8000)
+addBotMessage("Posso confirmar esse atendimento para você agora?")
+},7000)
 
 etapa="confirmacao"
-
 return
-
 }
 
 }
@@ -437,9 +318,5 @@ return
 /* ENTER */
 
 input.addEventListener("keypress",function(e){
-
-if(e.key==="Enter"){
-send()
-}
-
+if(e.key==="Enter") send()
 })
