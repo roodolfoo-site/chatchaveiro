@@ -1,4 +1,5 @@
 const express = require("express")
+const path = require("path")
 
 const fetch = (...args) =>
   import("node-fetch").then(({ default: fetch }) => fetch(...args))
@@ -14,10 +15,20 @@ app.use((req, res, next) => {
 })
 
 /* ============================ */
+/* SERVIR ARQUIVOS HTML */
+/* ============================ */
+
+app.use(express.static(__dirname))
+
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "chat.html"))
+})
+
+/* ============================ */
 /* CONFIG */
 /* ============================ */
 
-const OPENAI_API_KEY = "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"
+const OPENAI_API_KEY = "SUA_API_KEY_AQUI"
 
 const conversas = {}
 
@@ -25,184 +36,19 @@ const TEMPO_EXPIRACAO = 30 * 60 * 1000
 
 
 /* ============================ */
-/* PROMPT SUPER INTELIGENTE */
+/* PROMPT */
 /* ============================ */
 
-const promptSistema = `
+const promptSistema = `Você é Thais, atendente de uma central de chaveiros 24 horas.
 
-Você é Thais, atendente de uma central de chaveiros 24 horas.
+Converse como se estivesse no WhatsApp.
 
-Você conversa com clientes como se estivesse no WhatsApp.
+Respostas curtas.
+Seja simpática.
+Peça o endereço após entender o problema.
 
-Seu objetivo é entender o problema e enviar um técnico.
+Nunca ensine o cliente a resolver sozinho.`
 
-Fale sempre:
-
-• natural
-• simpática
-• profissional
-• mensagens curtas
-• nunca escreva textos longos
-• nunca ensine o cliente a resolver sozinho
-
-
-==============================
-PROBLEMAS QUE VOCÊ IDENTIFICA
-==============================
-
-Você entende problemas mesmo se o cliente explicar de forma confusa.
-
-Exemplos de problemas:
-
-chave quebrada
-chave emperrada
-chave travada
-chave não gira
-chave presa
-chave entortada
-chave danificada
-chave perdida
-chave dentro do carro
-chave caiu no carro
-porta trancada
-porta travada
-porta emperrada
-porta fechou sozinha
-porta bateu e travou
-fechadura quebrada
-fechadura emperrada
-fechadura travada
-miolo travado
-miolo quebrado
-troca de miolo
-troca de fechadura
-troca de segredo
-cópia de chave
-cópia de chave tetra
-cópia de chave multiponto
-chave tetra quebrada
-chave multiponto quebrada
-chave automotiva
-chave codificada
-chave com chip
-controle automotivo
-controle não funciona
-porta do carro trancada
-porta do carro não abre
-trava elétrica não abre
-alarme travou
-portão travado
-portão não abre
-portão emperrado
-cadeado travado
-cadeado quebrado
-cofre travado
-cofre não abre
-
-Sempre entenda mesmo se a frase for mal escrita.
-
-
-==============================
-DETECÇÃO DE URGÊNCIA
-==============================
-
-Se o cliente usar palavras como:
-
-urgente
-socorro
-rápido
-agora
-emergência
-preso
-presa
-desesperado
-
-comece a resposta com:
-
-"Vamos resolver isso o mais rápido possível 👍"
-
-
-==============================
-IDENTIFICAR LOCAL
-==============================
-
-Se o problema envolver:
-
-carro
-veículo
-automóvel
-
-pergunte:
-
-"Qual é o endereço onde o veículo está?"
-
-Caso contrário pergunte:
-
-"Qual é o endereço do local?"
-
-
-==============================
-FORMA DE RESPOSTA
-==============================
-
-Sempre responda em 3 partes:
-
-1 confirmar que entendeu
-2 dizer que consegue resolver
-3 pedir endereço
-
-
-Exemplo:
-
-"Entendi 👍
-Conseguimos resolver isso sem danificar a fechadura.
-
-Qual é o endereço do local?"
-
-
-==============================
-CLASSIFICAÇÃO INTERNA
-==============================
-
-Classifique o serviço internamente:
-
-SIMPLES
-MÉDIO
-COMPLEXO
-
-SIMPLES
-porta trancada
-chave dentro do carro
-abertura simples
-
-valor sugerido: 70
-
-
-MÉDIO
-chave quebrada
-fechadura travada
-miolo danificado
-
-valor sugerido: 85
-
-
-COMPLEXO
-chave automotiva
-chave codificada
-perda total da chave
-
-valor sugerido: 100
-
-
-IMPORTANTE
-
-Não informe valor nesse momento.
-
-Seu objetivo agora é apenas entender o problema e pedir endereço.
-
-Nunca repita perguntas já respondidas.
-
-`
 
 /* ============================ */
 /* CHAT */
@@ -254,10 +100,6 @@ app.post("/chat", async (req, res) => {
     content: pergunta
   })
 
-  if (conversas[ip].messages.length > 12) {
-    conversas[ip].messages.splice(1, 2)
-  }
-
   try {
 
     const resposta = await fetch(
@@ -281,7 +123,7 @@ app.post("/chat", async (req, res) => {
 
     const respostaIA =
       data.choices?.[0]?.message?.content ||
-      "Estou verificando essa informação 👍"
+      "Estou verificando 👍"
 
     conversas[ip].messages.push({
       role: "assistant",
@@ -294,11 +136,10 @@ app.post("/chat", async (req, res) => {
 
   } catch (error) {
 
-    console.log("ERRO OPENAI:")
-    console.log(error)
+    console.log("ERRO OPENAI:", error)
 
     res.json({
-      reply: "Estou verificando essa informação 👍"
+      reply: "Estou verificando 👍"
     })
 
   }
@@ -310,11 +151,12 @@ app.post("/chat", async (req, res) => {
 /* SERVER */
 /* ============================ */
 
-app.listen(3000, () => {
+const PORT = process.env.PORT || 3000
+
+app.listen(PORT, () => {
 
   console.log("")
-  console.log("Servidor rodando em:")
-  console.log("http://localhost:3000")
+  console.log("Servidor rodando")
   console.log("")
 
 })
