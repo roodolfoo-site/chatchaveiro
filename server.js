@@ -13,7 +13,7 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "chat.html"))
 })
 
-const OPENAI_API_KEY = "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"
+const OPENAI_API_KEY = "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"
 
 app.post("/chat", async (req, res) => {
 
