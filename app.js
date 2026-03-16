@@ -26,21 +26,64 @@ let tecnicoAtual=null
 let tempoChegada="20 a 30 minutos"
 
 
+
 /* IDENTIFICAR SERVIÇO */
 
 function identificarServico(msg){
 
 msg=msg.toLowerCase()
 
-if(msg.includes("chave dentro") || msg.includes("trancado") || msg.includes("abrir")) return "abertura"
+/* abertura */
 
-if(msg.includes("copiar") || msg.includes("copia") || msg.includes("segunda chave")) return "copia"
+if(
+msg.includes("chave dentro") ||
+msg.includes("chave no carro") ||
+msg.includes("chave no veiculo") ||
+msg.includes("trancado") ||
+msg.includes("me tranquei") ||
+msg.includes("abrir") ||
+msg.includes("porta travou")
+){
+return "abertura"
+}
 
-if(msg.includes("quebrou") || msg.includes("miolo") || msg.includes("fechadura") || msg.includes("conserto")) return "conserto"
+/* perdeu chave */
+
+if(
+msg.includes("perdi") ||
+msg.includes("perdeu") ||
+msg.includes("sumiu chave")
+){
+return "abertura"
+}
+
+/* copia */
+
+if(
+msg.includes("copiar") ||
+msg.includes("copia") ||
+msg.includes("segunda chave") ||
+msg.includes("fazer chave")
+){
+return "copia"
+}
+
+/* conserto */
+
+if(
+msg.includes("quebrou") ||
+msg.includes("miolo") ||
+msg.includes("fechadura") ||
+msg.includes("conserto") ||
+msg.includes("travou")
+){
+return "conserto"
+}
 
 return null
 
 }
+
 
 
 /* IDENTIFICAR LOCAL */
@@ -49,15 +92,34 @@ function identificarTipo(msg){
 
 msg=msg.toLowerCase()
 
-if(msg.includes("carro") || msg.includes("veiculo")) return "automotivo"
+if(
+msg.includes("carro") ||
+msg.includes("veiculo") ||
+msg.includes("automovel")
+){
+return "automotivo"
+}
 
-if(msg.includes("casa") || msg.includes("apartamento") || msg.includes("porta")) return "residencial"
+if(
+msg.includes("casa") ||
+msg.includes("apartamento") ||
+msg.includes("porta")
+){
+return "residencial"
+}
 
-if(msg.includes("empresa") || msg.includes("loja") || msg.includes("comercio")) return "comercial"
+if(
+msg.includes("empresa") ||
+msg.includes("loja") ||
+msg.includes("comercio")
+){
+return "comercial"
+}
 
 return null
 
 }
+
 
 
 /* VALOR DO SERVIÇO */
@@ -71,6 +133,7 @@ return 180
 return 120
 
 }
+
 
 
 /* HORA */
@@ -223,11 +286,13 @@ cliente.servico=servico
 
 const tipoDetectado=identificarTipo(msg)
 
+responder("Entendi 👍 vamos resolver isso para você.")
+
+/* se já detectou local */
+
 if(tipoDetectado){
 
 cliente.tipoLocal=tipoDetectado
-
-responder("Entendi 👍 conseguimos resolver isso.")
 
 setTimeout(()=>{
 addBotMessage("Pode me informar o endereço do local?")
@@ -239,7 +304,7 @@ return
 
 }
 
-responder("Perfeito 👍")
+/* perguntar tipo */
 
 setTimeout(()=>{
 addBotMessage("Esse serviço é residencial, comercial ou automotivo?")
