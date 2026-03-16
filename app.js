@@ -26,7 +26,6 @@ let tecnicoAtual=null
 let tempoChegada="20 a 30 minutos"
 
 
-
 /* IDENTIFICAR SERVIÇO */
 
 function identificarServico(msg){
@@ -42,7 +41,6 @@ if(msg.includes("quebrou") || msg.includes("miolo") || msg.includes("fechadura")
 return null
 
 }
-
 
 
 /* IDENTIFICAR LOCAL */
@@ -62,7 +60,6 @@ return null
 }
 
 
-
 /* VALOR DO SERVIÇO */
 
 function calcularValorServico(tipo){
@@ -74,7 +71,6 @@ return 180
 return 120
 
 }
-
 
 
 /* HORA */
@@ -369,12 +365,16 @@ return
 
 }
 
+}
+
 
 
 /* ENTER */
 
 input.addEventListener("keypress",function(e){
 
-if(e.key==="Enter") send()
+if(e.key==="Enter"){
+send()
+}
 
 })
