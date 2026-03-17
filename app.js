@@ -1,6 +1,5 @@
 // ⚠️ CONFIG
 const CHAVE_PIX = "11999999999"
-const SEU_WHATSAPP = "5511986731361"
 
 const messages = document.getElementById("messages")
 const input = document.getElementById("text")
@@ -64,21 +63,24 @@ function definirValor(texto){
 
 
 
-/* 🚨 AVISO WHATSAPP */
-function avisarWhatsApp(){
+/* 🚨 ENVIA LEAD PRO BACKEND */
+async function enviarLead(){
 
-  const texto = `🚨 Novo lead
-Nome: ${cliente.nome}
-Telefone: ${cliente.telefone}
-Bairro: ${cliente.bairro}
-Problema: ${cliente.problema}`
+  try{
+    await fetch("/lead",{
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({
+        nome: cliente.nome,
+        telefone: cliente.telefone,
+        bairro: cliente.bairro,
+        problema: cliente.problema
+      })
+    })
+  }catch(e){
+    console.log("Erro ao enviar lead:", e)
+  }
 
-  const url = `https://wa.me/${SEU_WHATSAPP}?text=${encodeURIComponent(texto)}`
-
-  const iframe = document.createElement("iframe")
-  iframe.style.display = "none"
-  iframe.src = url
-  document.body.appendChild(iframe)
 }
 
 
@@ -278,8 +280,8 @@ async function send(){
 
     cliente.telefone = texto
 
-    // 🔥 AQUI DISPARA O AVISO
-    avisarWhatsApp()
+    // 🔥 ENVIA PARA Z-API (BACKEND)
+    enviarLead()
 
     const tempo = tempos[Math.floor(Math.random()*tempos.length)]
 
