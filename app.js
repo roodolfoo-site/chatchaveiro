@@ -23,8 +23,6 @@ const tempos = [
   "20 a 30 minutos"
 ]
 
-
-
 function definirValor(texto){
   const t = texto.toLowerCase()
 
@@ -43,8 +41,6 @@ function definirValor(texto){
   return 120
 }
 
-
-
 /* ENVIA LEAD */
 async function enviarLead(){
   try{
@@ -55,8 +51,6 @@ async function enviarLead(){
     })
   }catch(e){}
 }
-
-
 
 /* IA */
 async function respostaIA(texto){
@@ -73,15 +67,23 @@ async function respostaIA(texto){
   }
 }
 
-
-
-/* 🔥 DETECTA DÚVIDA */
+/* 🔥 DETECTA DÚVIDA MELHORADA */
 function ehDuvida(texto){
   const t = texto.toLowerCase()
-  return t.includes("quanto") || t.includes("valor") || t.includes("preço")
+
+  return (
+    t.includes("quanto") ||
+    t.includes("valor") ||
+    t.includes("preço") ||
+    t.includes("demora") ||
+    t.includes("tempo") ||
+    t.includes("seguro") ||
+    t.includes("funciona") ||
+    t.includes("como") ||
+    t.includes("resolve") ||
+    t.includes("?")
+  )
 }
-
-
 
 function hora(){
   const agora=new Date()
@@ -91,8 +93,6 @@ function hora(){
 function scrollChat(){
   messages.scrollTop = messages.scrollHeight
 }
-
-
 
 /* DIGITANDO */
 function mostrarDigitando(){
@@ -107,8 +107,6 @@ function mostrarDigitando(){
 function removerDigitando(el){
   if(el) el.remove()
 }
-
-
 
 /* BOT */
 async function addBotMessage(text){
@@ -126,8 +124,6 @@ async function addBotMessage(text){
   messages.appendChild(msg)
   scrollChat()
 }
-
-
 
 /* USER */
 function addUserMessage(text){
@@ -148,8 +144,6 @@ function addBotImage(text){
   messages.appendChild(msg)
   scrollChat()
 }
-
-
 
 /* PIX */
 function mostrarPix(valor){
@@ -206,8 +200,6 @@ function copiarPix(texto){
   alert("PIX copiado 👍")
 }
 
-
-
 /* ENVIO */
 async function send(){
 
@@ -217,17 +209,24 @@ async function send(){
   addUserMessage(texto)
   input.value = ""
 
-
-  // 🔥 RESPONDE DÚVIDA EM QUALQUER ETAPA
+  // 🔥 IA RESPONDE DÚVIDA EM QUALQUER MOMENTO (SEM QUEBRAR FLUXO)
   if(ehDuvida(texto)){
-    addBotMessage(`Esse tipo de serviço normalmente fica entre R$120 e R$250 👍`)
+
+    const resposta = await respostaIA(texto)
+    addBotMessage(resposta)
+
     setTimeout(()=>{
-      addBotMessage(`No seu caso específico, fica em torno de R$${cliente.valor}`)
-    },1200)
+      if(etapa==="confirmacao"){
+        addBotMessage("Posso reservar para o técnico ir até você?")
+      }
+
+      if(etapa==="telefone"){
+        addBotMessage("Já estou verificando um técnico próximo pra você 👍")
+      }
+    },1500)
+
     return
   }
-
-
 
   if(etapa==="inicio"){
 
@@ -248,8 +247,6 @@ async function send(){
     etapa="endereco"
     return
   }
-
-
 
   if(etapa==="endereco"){
 
@@ -272,8 +269,6 @@ async function send(){
     return
   }
 
-
-
   if(etapa==="nome"){
 
     cliente.nome = texto
@@ -289,8 +284,6 @@ async function send(){
     etapa="telefone"
     return
   }
-
-
 
   if(etapa==="telefone"){
 
@@ -321,8 +314,6 @@ async function send(){
     etapa="confirmacao"
     return
   }
-
-
 
   if(etapa==="confirmacao"){
 
@@ -357,8 +348,6 @@ async function send(){
   }
 
 }
-
-
 
 /* ENTER */
 input.addEventListener("keydown",function(e){
