@@ -112,24 +112,59 @@ function addBotImage(text){
 
 
 
-/* PIX */
+/* PIX (AJUSTADO COMO VOCÊ PEDIU) */
 function mostrarPix(valor){
 
   const metade = valor / 2
+  const payload = CHAVE_PIX
 
-  addBotMessage(`Valor do serviço: R$${valor}`)
+  const msg=document.createElement("div")
+  msg.className="msg bot"
 
-  setTimeout(()=>{
-    addBotMessage("Para o deslocamento do técnico e evitar desistência, é feito o pagamento de 50% antecipado.")
-  },1000)
+  msg.innerHTML=`
+  <div style="text-align:center">
 
-  setTimeout(()=>{
-    addBotMessage("Esse valor é abatido do total, pode ficar tranquilo 👍")
-  },2000)
+    <div style="margin-bottom:8px;font-weight:600">
+      Pagamento via PIX
+    </div>
 
-  setTimeout(()=>{
-    addBotMessage(`Chave PIX: ${CHAVE_PIX}`)
-  },3000)
+    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${payload}" 
+    style="border-radius:10px;margin-bottom:10px;">
+
+    <div style="margin-bottom:8px;font-size:14px">
+      Esse tipo de serviço normalmente custa entre <b>R$120 e R$250</b>.<br><br>
+      No seu caso: <b>R$${valor}</b><br>
+      Para envio do técnico: <b>R$${metade}</b>
+    </div>
+
+    <div style="background:#f2f2f2;padding:8px;border-radius:8px;font-size:12px;word-break:break-all;margin-bottom:8px">
+      ${payload}
+    </div>
+
+    <button onclick="copiarPix('${payload}')" style="
+      background:#25D366;
+      color:white;
+      border:none;
+      padding:10px 14px;
+      border-radius:8px;
+      cursor:pointer;
+      font-weight:600;
+    ">
+      Copiar PIX
+    </button>
+
+  </div>
+
+  <div class="time">${hora()}</div>
+  `
+
+  messages.appendChild(msg)
+  scrollChat()
+}
+
+function copiarPix(texto){
+  navigator.clipboard.writeText(texto)
+  alert("PIX copiado 👍")
 }
 
 
@@ -247,7 +282,7 @@ async function send(){
 
 
 
-/* ENTER FUNCIONANDO */
+/* ENTER */
 input.addEventListener("keydown",function(e){
   if(e.key==="Enter"){
     e.preventDefault()
