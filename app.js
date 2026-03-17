@@ -1,3 +1,7 @@
+// ⚠️ COLOQUE SUA CHAVE PIX AQUI
+const CHAVE_PIX = "11999999999"
+const VALOR_SINAL = 50
+
 const messages = document.getElementById("messages")
 const input = document.getElementById("text")
 
@@ -196,7 +200,7 @@ return
 
 
 
-/* CONFIRMAÇÃO (CORRIGIDO) */
+/* CONFIRMAÇÃO + PIX */
 
 if(etapa==="confirmacao"){
 
@@ -210,24 +214,27 @@ msg.includes("ok") ||
 msg.includes("quero")
 ){
 
-addBotMessage("Perfeito 👍 estou confirmando o atendimento.")
+addBotMessage("Perfeito 👍 para garantir o envio do técnico, é necessário um sinal.")
 
 setTimeout(()=>{
-addBotMessage("O técnico já foi acionado e está a caminho 🚗")
+addBotMessage(`O valor do sinal é de R$${VALOR_SINAL}.`)
 },1500)
 
 setTimeout(()=>{
-addBotMessage("Qualquer dúvida pode me chamar por aqui.")
+addBotMessage(`Chave PIX: ${CHAVE_PIX}`)
 },3000)
 
-etapa="finalizado"
+setTimeout(()=>{
+addBotMessage("Assim que realizar o pagamento, me envie o comprovante por aqui para liberar o técnico imediatamente.")
+},4500)
+
+etapa="aguardando_pagamento"
 return
 }
 
 if(
 msg.includes("não") ||
-msg.includes("nao") ||
-msg.includes("cancelar")
+msg.includes("nao")
 ){
 addBotMessage("Sem problema 👍 se precisar é só me chamar.")
 etapa="finalizado"
@@ -235,6 +242,17 @@ return
 }
 
 addBotMessage("Deseja que eu confirme o atendimento agora?")
+return
+}
+
+
+
+/* PAGAMENTO */
+
+if(etapa==="aguardando_pagamento"){
+
+addBotMessage("Assim que você enviar o comprovante, já libero o técnico imediatamente 👍")
+
 return
 }
 
