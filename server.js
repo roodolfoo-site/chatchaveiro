@@ -2,6 +2,11 @@ const express = require("express")
 const path = require("path")
 const cors = require("cors")
 
+// 🔥 GARANTE FETCH FUNCIONANDO
+const fetch = global.fetch || ((...args) =>
+  import("node-fetch").then(({ default: fetch }) => fetch(...args))
+)
+
 const app = express()
 
 app.use(cors())
