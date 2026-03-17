@@ -2,18 +2,14 @@ const messages = document.getElementById("messages")
 const input = document.getElementById("text")
 
 let cliente={
-servico:"",
-tipoLocal:"",
 endereco:"",
 telefone:"",
 nome:""
 }
 
-let etapa="identificar_servico"
+let etapa="inicio"
 
-const tecnicos=[
-{nome:"Antonio Carlos"}
-]
+const tecnicos=[{nome:"Antonio Carlos"}]
 
 const tempos=[
 "15 a 20 minutos",
@@ -23,11 +19,10 @@ const tempos=[
 ]
 
 let tecnicoAtual=null
-let tempoChegada="20 a 30 minutos"
 
 
 
-/* IA (NOVO) */
+/* IA */
 async function respostaIA(texto){
 try{
 const res=await fetch("/chat",{
@@ -35,10 +30,8 @@ method:"POST",
 headers:{ "Content-Type":"application/json" },
 body:JSON.stringify({ message:texto })
 })
-
 const data=await res.json()
 return data.reply
-
 }catch{
 return "Já vou te ajudar 👍"
 }
@@ -46,71 +39,7 @@ return "Já vou te ajudar 👍"
 
 
 
-/* IDENTIFICAR SERVIÇO */
-
-function identificarServico(msg){
-
-msg=msg.toLowerCase()
-
-if(
-msg.includes("perdi") ||
-msg.includes("chave dentro") ||
-msg.includes("chave no carro") ||
-msg.includes("trancado") ||
-msg.includes("me tranquei") ||
-msg.includes("abrir") ||
-msg.includes("porta travou")
-){
-return "abertura"
-}
-
-if(
-msg.includes("copiar") ||
-msg.includes("copia") ||
-msg.includes("segunda chave")
-){
-return "copia"
-}
-
-if(
-msg.includes("quebrou") ||
-msg.includes("miolo") ||
-msg.includes("fechadura") ||
-msg.includes("conserto")
-){
-return "conserto"
-}
-
-return null
-}
-
-
-
-/* IDENTIFICAR LOCAL */
-
-function identificarTipo(msg){
-
-msg=msg.toLowerCase()
-
-if(msg.includes("carro") || msg.includes("veiculo")) return "automotivo"
-if(msg.includes("casa") || msg.includes("apartamento")) return "residencial"
-if(msg.includes("empresa") || msg.includes("loja")) return "comercial"
-
-return null
-}
-
-
-
-/* VALOR */
-
-function calcularValorServico(tipo){
-return tipo==="automotivo" ? 180 : 120
-}
-
-
-
 /* HORA */
-
 function hora(){
 const agora=new Date()
 return agora.getHours().toString().padStart(2,"0")+":"+agora.getMinutes().toString().padStart(2,"0")
@@ -123,7 +52,6 @@ messages.scrollTop=messages.scrollHeight
 
 
 /* MENSAGENS */
-
 function addUserMessage(text){
 const msg=document.createElement("div")
 msg.className="msg user"
@@ -154,7 +82,6 @@ scrollChat()
 
 
 /* DIGITAÇÃO */
-
 function typing(){
 const msg=document.createElement("div")
 msg.className="msg bot typing-box"
@@ -167,7 +94,6 @@ return msg
 
 
 /* ENVIO */
-
 async function send(){
 
 const texto=input.value.trim()
@@ -176,13 +102,11 @@ if(!texto) return
 addUserMessage(texto)
 input.value=""
 
-const msg=texto.toLowerCase()
 
 
+/* IA PRIMEIRO */
 
-/* PRIMEIRA ETAPA COM IA */
-
-if(etapa==="identificar_servico"){
+if(etapa==="inicio"){
 
 const t=typing()
 
@@ -191,53 +115,10 @@ const resposta = await respostaIA(texto)
 t.remove()
 addBotMessage(resposta)
 
-/* CONTINUA SEU FLUXO NORMAL */
-
-const servico=identificarServico(msg)
-
-if(!servico){
-setTimeout(()=>{
-addBotMessage("Você precisa de abertura, conserto ou cópia de chave?")
-},1500)
-return
-}
-
-cliente.servico=servico
-
-const tipoDetectado=identificarTipo(msg)
-
-if(tipoDetectado){
-cliente.tipoLocal=tipoDetectado
-
+/* segue direto */
 setTimeout(()=>{
 addBotMessage("Pode me informar o endereço completo? (rua e número)")
-},1500)
-
-etapa="endereco"
-return
-}
-
-setTimeout(()=>{
-addBotMessage("Esse atendimento é em casa, empresa ou veículo?")
-},1500)
-
-etapa="tipo_local"
-return
-}
-
-
-
-/* TIPO */
-
-if(etapa==="tipo_local"){
-
-cliente.tipoLocal=texto
-
-addBotMessage("Perfeito 👍")
-
-setTimeout(()=>{
-addBotMessage("Pode me informar o endereço completo? (rua e número)")
-},1500)
+},1200)
 
 etapa="endereco"
 return
@@ -260,7 +141,7 @@ addBotMessage("Perfeito 👍 já localizei sua região.")
 
 setTimeout(()=>{
 addBotMessage("Qual é o seu nome?")
-},1500)
+},1200)
 
 etapa="nome"
 return
@@ -278,7 +159,7 @@ addBotMessage(`Prazer ${cliente.nome} 😊`)
 
 setTimeout(()=>{
 addBotMessage("Agora me informe seu telefone 📞")
-},1500)
+},1200)
 
 etapa="telefone"
 return
@@ -293,25 +174,22 @@ if(etapa==="telefone"){
 cliente.telefone=texto
 
 tecnicoAtual=tecnicos[0]
-tempoChegada=tempos[Math.floor(Math.random()*tempos.length)]
-
-const valor=calcularValorServico(cliente.tipoLocal)
+const tempo=tempos[Math.floor(Math.random()*tempos.length)]
 
 addBotMessage("Já encontrei um técnico próximo de você.")
 
 setTimeout(()=>{
 addBotImage(`✔ Técnico disponível<br><br>
-Nome: ${tecnicoAtual.nome}<br>
-Valor: R$${valor}`)
-},2000)
+Nome: ${tecnicoAtual.nome}`)
+},1500)
 
 setTimeout(()=>{
-addBotMessage(`Ele chega em aproximadamente ${tempoChegada}.`)
-},3500)
+addBotMessage(`Ele chega em aproximadamente ${tempo}.`)
+},3000)
 
 setTimeout(()=>{
 addBotMessage("Posso confirmar esse atendimento para você agora?")
-},5000)
+},4500)
 
 etapa="confirmacao"
 return
@@ -322,7 +200,6 @@ return
 
 
 /* ENTER */
-
 input.addEventListener("keypress",function(e){
 if(e.key==="Enter") send()
 })
