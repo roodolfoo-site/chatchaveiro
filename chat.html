@@ -3,6 +3,8 @@
 <head>
 
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Atendimento</title>
 
 <style>
@@ -24,14 +26,29 @@ align-items:center;
 /* container */
 
 .chat-container{
-width:380px;
-height:92vh;
+width:100%;
+max-width:420px;
+height:100vh;
 display:flex;
 flex-direction:column;
 background:#efeae2;
 border-radius:12px;
 box-shadow:0 8px 30px rgba(0,0,0,0.25);
 overflow:hidden;
+}
+
+/* mobile full */
+
+@media (max-width:500px){
+.chat-container{
+width:100%;
+height:100vh;
+border-radius:0;
+box-shadow:none;
+}
+body{
+background:#efeae2;
+}
 }
 
 /* header */
@@ -62,8 +79,6 @@ object-fit:cover;
 object-position:60% 30%;
 }
 
-/* bolinha online */
-
 .avatar::after{
 content:"";
 width:10px;
@@ -75,8 +90,6 @@ bottom:2px;
 right:2px;
 border:2px solid #075E54;
 }
-
-/* nome */
 
 .name{
 font-size:14px;
@@ -92,7 +105,7 @@ opacity:0.8;
 
 .messages{
 flex:1;
-padding:15px;
+padding:12px;
 overflow-y:auto;
 background-image:url("whats-fundo.jpg");
 background-size:280px;
@@ -101,9 +114,9 @@ background-size:280px;
 /* mensagens */
 
 .msg{
-max-width:75%;
+max-width:80%;
 padding:10px 14px;
-margin-bottom:14px;
+margin-bottom:12px;
 border-radius:10px;
 font-size:14px;
 line-height:1.4;
@@ -116,8 +129,6 @@ animation:fade 0.2s ease;
 from{opacity:0; transform:translateY(5px);}
 to{opacity:1; transform:translateY(0);}
 }
-
-/* bot */
 
 .bot{
 background:white;
@@ -134,8 +145,6 @@ border-style:solid;
 border-color:white transparent transparent transparent;
 }
 
-/* usuario */
-
 .user{
 background:#d9fdd3;
 margin-left:auto;
@@ -151,8 +160,6 @@ border-width:6px;
 border-style:solid;
 border-color:#d9fdd3 transparent transparent transparent;
 }
-
-/* hora */
 
 .time{
 font-size:11px;
@@ -172,17 +179,17 @@ align-items:center;
 
 input{
 flex:1;
-padding:10px 14px;
+padding:12px 16px;
 border-radius:20px;
 border:1px solid #ddd;
-font-size:14px;
+font-size:16px; /* evita zoom no iPhone */
 outline:none;
 background:white;
 }
 
 button{
 margin-left:8px;
-padding:10px 18px;
+padding:12px 16px;
 background:#25D366;
 border:none;
 color:white;
@@ -228,20 +235,15 @@ background:#1ebe5d;
 <script>
 
 function hora(){
-
 const agora=new Date()
-
 let h=agora.getHours().toString().padStart(2,"0")
 let m=agora.getMinutes().toString().padStart(2,"0")
-
 return h+":"+m
-
 }
 
 /* mensagem inicial */
 
 window.onload=function(){
-
 const messages=document.getElementById("messages")
 
 const msg=document.createElement("div")
@@ -250,12 +252,10 @@ msg.className="msg bot"
 msg.innerHTML="Olá 👋 Sou a Thais da central de atendimento.<br><br>O que aconteceu com sua chave ou fechadura?<div class='time'>"+hora()+"</div>"
 
 messages.appendChild(msg)
-
 messages.scrollTop=messages.scrollHeight
-
 }
 
-/* enviar mensagem */
+/* enviar */
 
 async function send(){
 
@@ -263,7 +263,6 @@ const input=document.getElementById("text")
 const messages=document.getElementById("messages")
 
 const texto=input.value.trim()
-
 if(!texto) return
 
 const msgUser=document.createElement("div")
@@ -271,35 +270,33 @@ msgUser.className="msg user"
 msgUser.innerHTML=texto+"<div class='time'>"+hora()+"</div>"
 
 messages.appendChild(msgUser)
-
 messages.scrollTop=messages.scrollHeight
 
 input.value=""
 
-/* chamar servidor */
+/* loading */
+
+const loading=document.createElement("div")
+loading.className="msg bot"
+loading.innerHTML="Digitando..."
+messages.appendChild(loading)
+messages.scrollTop=messages.scrollHeight
 
 const resposta=await fetch("/chat",{
-
 method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-
-body:JSON.stringify({
-message:texto
-})
-
+headers:{ "Content-Type":"application/json" },
+body:JSON.stringify({ message:texto })
 })
 
 const data=await resposta.json()
 
+loading.remove()
+
 const msgBot=document.createElement("div")
 msgBot.className="msg bot"
-
 msgBot.innerHTML=data.reply+"<div class='time'>"+hora()+"</div>"
 
 messages.appendChild(msgBot)
-
 messages.scrollTop=messages.scrollHeight
 
 }
@@ -307,17 +304,11 @@ messages.scrollTop=messages.scrollHeight
 /* ENTER */
 
 document.addEventListener("DOMContentLoaded",function(){
-
 const input=document.getElementById("text")
 
 input.addEventListener("keypress",function(e){
-
-if(e.key==="Enter"){
-send()
-}
-
+if(e.key==="Enter") send()
 })
-
 })
 
 </script>
