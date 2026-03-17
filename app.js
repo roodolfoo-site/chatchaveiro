@@ -14,19 +14,14 @@ let cliente = {
 
 let etapa = "inicio"
 
-const tecnicos = [
-  { nome: "Antonio Carlos" },
-  { nome: "Roberto Silva" },
-  { nome: "Marcos Paulo" }
-]
+// 🔥 AGORA SÓ UM TÉCNICO
+const tecnicoFixo = { nome: "Antonio Carlos" }
 
 const tempos = [
   "15 a 20 minutos",
   "18 a 25 minutos",
   "20 a 30 minutos"
 ]
-
-let tecnicoAtual = null
 
 
 
@@ -101,7 +96,7 @@ function typing(){
 
 
 
-/* PIX PROFISSIONAL */
+/* PIX */
 function mostrarPix(){
 
   const payload = CHAVE_PIX
@@ -238,14 +233,13 @@ async function send(){
 
     cliente.telefone = texto
 
-    tecnicoAtual = tecnicos[Math.floor(Math.random()*tecnicos.length)]
     const tempo = tempos[Math.floor(Math.random()*tempos.length)]
 
     addBotMessage("Já confirmei um técnico próximo da sua região.")
 
     setTimeout(()=>{
       addBotImage(`✔ Técnico já a caminho<br><br>
-      Nome: ${tecnicoAtual.nome}`)
+      Nome: ${tecnicoFixo.nome}`)
     },1500)
 
     setTimeout(()=>{
