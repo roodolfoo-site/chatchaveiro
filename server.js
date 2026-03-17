@@ -17,6 +17,32 @@ app.get("/", (req, res) => {
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY
 
+// 🔥 Z-API CONFIG
+const INSTANCE_ID = "3F0455D41A0E631E4DA8BE013F70DD68"
+const TOKEN = "A7EF09DC13E425872118D2CC"
+const SEU_NUMERO = "5511986731361"
+
+
+/* 🚨 ENVIA WHATSAPP */
+async function enviarWhatsApp(mensagem){
+  try{
+    await fetch(`https://api.z-api.io/instances/${INSTANCE_ID}/token/${TOKEN}/send-text`,{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body: JSON.stringify({
+        phone: SEU_NUMERO,
+        message: mensagem
+      })
+    })
+  }catch(e){
+    console.log("Erro WhatsApp:", e)
+  }
+}
+
+
+
 app.post("/chat", async (req, res) => {
 
   const pergunta = req.body.message
@@ -107,6 +133,27 @@ EXEMPLOS:
   }
 
 })
+
+
+// 🔥 NOVA ROTA PARA RECEBER LEAD
+app.post("/lead", async (req, res) => {
+
+  const { nome, telefone, bairro, problema } = req.body
+
+  const mensagem = `🚨 Novo lead
+
+Nome: ${nome}
+Telefone: ${telefone}
+Bairro: ${bairro}
+Problema: ${problema}`
+
+  await enviarWhatsApp(mensagem)
+
+  res.json({ ok: true })
+
+})
+
+
 
 const PORT = process.env.PORT || 3000
 
