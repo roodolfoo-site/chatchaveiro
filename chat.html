@@ -14,58 +14,39 @@ box-sizing:border-box;
 }
 
 body{
-font-family:"Segoe UI", Arial, sans-serif;
-background:#d1d7db;
 margin:0;
-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
+font-family:"Segoe UI", Arial, sans-serif;
+background:#efeae2;
 }
 
 /* container */
 
 .chat-container{
 width:100%;
-max-width:420px;
 height:100vh;
 display:flex;
 flex-direction:column;
-background:#efeae2;
-border-radius:12px;
-box-shadow:0 8px 30px rgba(0,0,0,0.25);
-overflow:hidden;
 }
 
-/* mobile full */
-
-@media (max-width:500px){
-.chat-container{
-width:100%;
-height:100vh;
-border-radius:0;
-box-shadow:none;
-}
-body{
-background:#efeae2;
-}
-}
-
-/* header */
+/* HEADER FIXO */
 
 .header{
 background:#075E54;
 color:white;
-padding:12px;
+padding:10px;
 display:flex;
 align-items:center;
+position:fixed;
+top:0;
+width:100%;
+z-index:10;
 }
 
 /* avatar */
 
 .avatar{
-width:42px;
-height:42px;
+width:40px;
+height:40px;
 border-radius:50%;
 overflow:hidden;
 margin-right:10px;
@@ -73,10 +54,9 @@ position:relative;
 }
 
 .avatar img{
-width:140%;
-height:140%;
+width:100%;
+height:100%;
 object-fit:cover;
-object-position:60% 30%;
 }
 
 .avatar::after{
@@ -101,27 +81,26 @@ font-size:11px;
 opacity:0.8;
 }
 
-/* chat */
+/* CHAT */
 
 .messages{
 flex:1;
-padding:12px;
+padding:70px 10px 80px;
 overflow-y:auto;
 background-image:url("whats-fundo.jpg");
 background-size:280px;
 }
 
-/* mensagens */
+/* MENSAGENS */
 
 .msg{
 max-width:80%;
 padding:10px 14px;
-margin-bottom:12px;
+margin-bottom:10px;
 border-radius:10px;
 font-size:14px;
 line-height:1.4;
 position:relative;
-box-shadow:0 1px 1px rgba(0,0,0,0.15);
 animation:fade 0.2s ease;
 }
 
@@ -135,30 +114,10 @@ background:white;
 border-top-left-radius:0;
 }
 
-.bot::before{
-content:"";
-position:absolute;
-left:-6px;
-top:0;
-border-width:6px;
-border-style:solid;
-border-color:white transparent transparent transparent;
-}
-
 .user{
 background:#d9fdd3;
 margin-left:auto;
 border-top-right-radius:0;
-}
-
-.user::before{
-content:"";
-position:absolute;
-right:-6px;
-top:0;
-border-width:6px;
-border-style:solid;
-border-color:#d9fdd3 transparent transparent transparent;
 }
 
 .time{
@@ -168,13 +127,15 @@ text-align:right;
 margin-top:4px;
 }
 
-/* input */
+/* INPUT FIXO */
 
 .input-area{
+position:fixed;
+bottom:0;
+width:100%;
 display:flex;
 padding:10px;
 background:#f0f2f5;
-align-items:center;
 }
 
 input{
@@ -182,20 +143,25 @@ flex:1;
 padding:12px 16px;
 border-radius:20px;
 border:1px solid #ddd;
-font-size:16px; /* evita zoom no iPhone */
+font-size:16px;
 outline:none;
-background:white;
 }
+
+/* BOTÃO ESTILO WHATS */
 
 button{
 margin-left:8px;
-padding:12px 16px;
+width:45px;
+height:45px;
+border-radius:50%;
 background:#25D366;
 border:none;
 color:white;
-border-radius:20px;
+font-size:18px;
 cursor:pointer;
-font-weight:600;
+display:flex;
+align-items:center;
+justify-content:center;
 }
 
 button:hover{
@@ -211,7 +177,6 @@ background:#1ebe5d;
 <div class="chat-container">
 
 <div class="header">
-
 <div class="avatar">
 <img src="atendente.jpg">
 </div>
@@ -220,14 +185,13 @@ background:#1ebe5d;
 <div class="name">Thais - Atendimento</div>
 <div class="status">online agora</div>
 </div>
-
 </div>
 
 <div id="messages" class="messages"></div>
 
 <div class="input-area">
 <input id="text" placeholder="Digite sua mensagem">
-<button onclick="send()">Enviar</button>
+<button onclick="send()">➤</button>
 </div>
 
 </div>
@@ -236,23 +200,23 @@ background:#1ebe5d;
 
 function hora(){
 const agora=new Date()
-let h=agora.getHours().toString().padStart(2,"0")
-let m=agora.getMinutes().toString().padStart(2,"0")
-return h+":"+m
+return agora.getHours().toString().padStart(2,"0")+":"+agora.getMinutes().toString().padStart(2,"0")
 }
 
 /* mensagem inicial */
 
 window.onload=function(){
+
 const messages=document.getElementById("messages")
 
 const msg=document.createElement("div")
 msg.className="msg bot"
 
-msg.innerHTML="Olá 👋 Sou a Thais da central de atendimento.<br><br>O que aconteceu com sua chave ou fechadura?<div class='time'>"+hora()+"</div>"
+msg.innerHTML="Olá 👋 Sou a Thais da central.<br><br>O que aconteceu com sua chave ou fechadura?<div class='time'>"+hora()+"</div>"
 
 messages.appendChild(msg)
 messages.scrollTop=messages.scrollHeight
+
 }
 
 /* enviar */
@@ -265,22 +229,21 @@ const messages=document.getElementById("messages")
 const texto=input.value.trim()
 if(!texto) return
 
-const msgUser=document.createElement("div")
-msgUser.className="msg user"
-msgUser.innerHTML=texto+"<div class='time'>"+hora()+"</div>"
+const user=document.createElement("div")
+user.className="msg user"
+user.innerHTML=texto+"<div class='time'>"+hora()+"</div>"
 
-messages.appendChild(msgUser)
+messages.appendChild(user)
 messages.scrollTop=messages.scrollHeight
 
 input.value=""
 
-/* loading */
+/* digitando */
 
-const loading=document.createElement("div")
-loading.className="msg bot"
-loading.innerHTML="Digitando..."
-messages.appendChild(loading)
-messages.scrollTop=messages.scrollHeight
+const typing=document.createElement("div")
+typing.className="msg bot"
+typing.innerHTML="Digitando..."
+messages.appendChild(typing)
 
 const resposta=await fetch("/chat",{
 method:"POST",
@@ -290,13 +253,13 @@ body:JSON.stringify({ message:texto })
 
 const data=await resposta.json()
 
-loading.remove()
+typing.remove()
 
-const msgBot=document.createElement("div")
-msgBot.className="msg bot"
-msgBot.innerHTML=data.reply+"<div class='time'>"+hora()+"</div>"
+const bot=document.createElement("div")
+bot.className="msg bot"
+bot.innerHTML=data.reply+"<div class='time'>"+hora()+"</div>"
 
-messages.appendChild(msgBot)
+messages.appendChild(bot)
 messages.scrollTop=messages.scrollHeight
 
 }
@@ -304,11 +267,13 @@ messages.scrollTop=messages.scrollHeight
 /* ENTER */
 
 document.addEventListener("DOMContentLoaded",function(){
+
 const input=document.getElementById("text")
 
 input.addEventListener("keypress",function(e){
 if(e.key==="Enter") send()
 })
+
 })
 
 </script>
