@@ -112,7 +112,7 @@ function addBotImage(text){
 
 
 
-/* PIX (AJUSTADO COMO VOCÊ PEDIU) */
+/* PIX */
 function mostrarPix(valor){
 
   const metade = valor / 2
@@ -134,7 +134,7 @@ function mostrarPix(valor){
     <div style="margin-bottom:8px;font-size:14px">
       Esse tipo de serviço normalmente custa entre <b>R$120 e R$250</b>.<br><br>
       No seu caso: <b>R$${valor}</b><br>
-      Para envio do técnico: <b>R$${metade}</b>
+      Para garantir o atendimento imediato: <b>R$${metade}</b>
     </div>
 
     <div style="background:#f2f2f2;padding:8px;border-radius:8px;font-size:12px;word-break:break-all;margin-bottom:8px">
@@ -248,7 +248,7 @@ async function send(){
     },25000)
 
     setTimeout(()=>{
-      addBotMessage("Posso reservar para o técnico ir até você?")
+      addBotMessage("Posso reservar agora? Tenho ele disponível nesse momento 👍")
     },26000)
 
     etapa="confirmacao"
@@ -264,10 +264,18 @@ async function send(){
 
     if(msg.includes("sim") || msg.includes("ok") || msg.includes("quero")){
 
-      mostrarPix(cliente.valor)
+      addBotMessage("Como é atendimento imediato, a agenda é por ordem de confirmação 👍")
 
       setTimeout(()=>{
-        addBotMessage("Assim que enviar o comprovante, já libero o atendimento 👍")
+        addBotMessage("Esse valor é apenas para garantir o deslocamento, e é abatido do total do serviço 👍")
+      },1000)
+
+      setTimeout(()=>{
+        mostrarPix(cliente.valor)
+      },2000)
+
+      setTimeout(()=>{
+        addBotMessage("Assim que me enviar o comprovante, já libero ele imediatamente pra sua rota 👍")
       },4000)
 
       etapa="aguardando_pagamento"
