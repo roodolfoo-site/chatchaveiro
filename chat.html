@@ -9,9 +9,7 @@
 
 <style>
 
-*{
-box-sizing:border-box;
-}
+*{ box-sizing:border-box; }
 
 body{
 margin:0;
@@ -20,7 +18,6 @@ background:#efeae2;
 }
 
 /* container */
-
 .chat-container{
 width:100%;
 height:100vh;
@@ -28,8 +25,7 @@ display:flex;
 flex-direction:column;
 }
 
-/* HEADER FIXO */
-
+/* HEADER */
 .header{
 background:#075E54;
 color:white;
@@ -41,8 +37,6 @@ top:0;
 width:100%;
 z-index:10;
 }
-
-/* avatar */
 
 .avatar{
 width:40px;
@@ -71,18 +65,10 @@ right:2px;
 border:2px solid #075E54;
 }
 
-.name{
-font-size:14px;
-font-weight:600;
-}
-
-.status{
-font-size:11px;
-opacity:0.8;
-}
+.name{ font-size:14px; font-weight:600; }
+.status{ font-size:11px; opacity:0.8; }
 
 /* CHAT */
-
 .messages{
 flex:1;
 padding:70px 10px 80px;
@@ -92,7 +78,6 @@ background-size:280px;
 }
 
 /* MENSAGENS */
-
 .msg{
 max-width:80%;
 padding:10px 14px;
@@ -100,7 +85,6 @@ margin-bottom:10px;
 border-radius:10px;
 font-size:14px;
 line-height:1.4;
-position:relative;
 animation:fade 0.2s ease;
 }
 
@@ -127,8 +111,29 @@ text-align:right;
 margin-top:4px;
 }
 
-/* INPUT FIXO */
+/* digitando bolinhas */
+.typing{
+display:flex;
+gap:4px;
+}
 
+.typing span{
+width:6px;
+height:6px;
+background:#999;
+border-radius:50%;
+animation:blink 1.4s infinite;
+}
+
+.typing span:nth-child(2){ animation-delay:0.2s; }
+.typing span:nth-child(3){ animation-delay:0.4s; }
+
+@keyframes blink{
+0%,80%,100%{ opacity:0.2; }
+40%{ opacity:1; }
+}
+
+/* INPUT */
 .input-area{
 position:fixed;
 bottom:0;
@@ -146,8 +151,6 @@ border:1px solid #ddd;
 font-size:16px;
 outline:none;
 }
-
-/* BOTÃO ESTILO WHATS */
 
 button{
 margin-left:8px;
@@ -203,47 +206,55 @@ const agora=new Date()
 return agora.getHours().toString().padStart(2,"0")+":"+agora.getMinutes().toString().padStart(2,"0")
 }
 
-/* mensagem inicial */
-
-window.onload=function(){
-
+function addMsg(texto, tipo){
 const messages=document.getElementById("messages")
 
 const msg=document.createElement("div")
-msg.className="msg bot"
-
-msg.innerHTML="Olá 👋 Sou a Thais da central.<br><br>O que aconteceu com sua chave ou fechadura?<div class='time'>"+hora()+"</div>"
+msg.className="msg "+tipo
+msg.innerHTML=texto+"<div class='time'>"+hora()+"</div>"
 
 messages.appendChild(msg)
 messages.scrollTop=messages.scrollHeight
-
 }
 
-/* enviar */
+/* mensagem inicial */
+window.onload=function(){
+addMsg("Olá 👋 Sou a Thais da central.<br><br>O que aconteceu com sua chave ou fechadura?","bot")
+}
 
-async function send(){
-
-const input=document.getElementById("text")
+/* digitando animado */
+function mostrarDigitando(){
 const messages=document.getElementById("messages")
-
-const texto=input.value.trim()
-if(!texto) return
-
-const user=document.createElement("div")
-user.className="msg user"
-user.innerHTML=texto+"<div class='time'>"+hora()+"</div>"
-
-messages.appendChild(user)
-messages.scrollTop=messages.scrollHeight
-
-input.value=""
-
-/* digitando */
 
 const typing=document.createElement("div")
 typing.className="msg bot"
-typing.innerHTML="Digitando..."
+typing.id="typing"
+
+typing.innerHTML="<div class='typing'><span></span><span></span><span></span></div>"
+
 messages.appendChild(typing)
+messages.scrollTop=messages.scrollHeight
+}
+
+function removerDigitando(){
+const t=document.getElementById("typing")
+if(t) t.remove()
+}
+
+/* enviar */
+async function send(){
+
+const input=document.getElementById("text")
+const texto=input.value.trim()
+
+if(!texto) return
+
+addMsg(texto,"user")
+input.value=""
+
+mostrarDigitando()
+
+try{
 
 const resposta=await fetch("/chat",{
 method:"POST",
@@ -253,27 +264,23 @@ body:JSON.stringify({ message:texto })
 
 const data=await resposta.json()
 
-typing.remove()
+removerDigitando()
 
-const bot=document.createElement("div")
-bot.className="msg bot"
-bot.innerHTML=data.reply+"<div class='time'>"+hora()+"</div>"
+/* delay humano */
+setTimeout(()=>{
+addMsg(data.reply,"bot")
+}, 800)
 
-messages.appendChild(bot)
-messages.scrollTop=messages.scrollHeight
+}catch(e){
+removerDigitando()
+addMsg("Tivemos um erro aqui, mas já vou te ajudar. Pode repetir por favor?","bot")
+}
 
 }
 
 /* ENTER */
-
-document.addEventListener("DOMContentLoaded",function(){
-
-const input=document.getElementById("text")
-
-input.addEventListener("keypress",function(e){
+document.getElementById("text").addEventListener("keypress",function(e){
 if(e.key==="Enter") send()
-})
-
 })
 
 </script>
