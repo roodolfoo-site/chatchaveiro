@@ -30,6 +30,17 @@ function definirValor(texto){
 
   const t = texto.toLowerCase()
 
+  // 🔥 FECHADURA ELETRÔNICA = 250
+  if(
+    t.includes("eletrônica") ||
+    t.includes("eletronica") ||
+    t.includes("digital") ||
+    t.includes("senha") ||
+    t.includes("biometria")
+  ){
+    return 250
+  }
+
   // complexo
   if(
     t.includes("perdi a chave") ||
