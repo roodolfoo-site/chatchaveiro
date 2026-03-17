@@ -101,6 +101,56 @@ function typing(){
 
 
 
+/* PIX PROFISSIONAL */
+function mostrarPix(){
+
+  const payload = CHAVE_PIX
+
+  const msg=document.createElement("div")
+  msg.className="msg bot"
+
+  msg.innerHTML=`
+  <div style="text-align:center">
+
+    <div style="margin-bottom:8px;font-weight:600">
+      Pagamento via PIX
+    </div>
+
+    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${payload}" 
+    style="border-radius:10px;margin-bottom:10px;">
+
+    <div style="background:#f2f2f2;padding:8px;border-radius:8px;font-size:12px;word-break:break-all;margin-bottom:8px">
+      ${payload}
+    </div>
+
+    <button onclick="copiarPix('${payload}')" style="
+      background:#25D366;
+      color:white;
+      border:none;
+      padding:10px 14px;
+      border-radius:8px;
+      cursor:pointer;
+      font-weight:600;
+    ">
+      Copiar PIX
+    </button>
+
+  </div>
+
+  <div class="time">${hora()}</div>
+  `
+
+  messages.appendChild(msg)
+  scrollChat()
+}
+
+function copiarPix(texto){
+  navigator.clipboard.writeText(texto)
+  alert("PIX copiado 👍")
+}
+
+
+
 /* ENVIO */
 async function send(){
 
@@ -146,8 +196,6 @@ async function send(){
     }
 
     cliente.endereco = texto
-
-    // tenta pegar bairro (última palavra)
     cliente.bairro = partes[partes.length - 1]
 
     addBotMessage(`Perfeito 👍 já identifiquei sua região (${cliente.bairro}).`)
@@ -239,7 +287,7 @@ async function send(){
       },2500)
 
       setTimeout(()=>{
-        addBotMessage(`Chave PIX: ${CHAVE_PIX}`)
+        mostrarPix()
       },4000)
 
       setTimeout(()=>{
