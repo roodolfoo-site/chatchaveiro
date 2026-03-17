@@ -80,17 +80,50 @@ function scrollChat(){
 
 
 
-function addUserMessage(text){
+/* 🔥 DIGITANDO (NOVO) */
+function mostrarDigitando(){
   const msg = document.createElement("div")
-  msg.className = "msg user"
+  msg.className = "msg bot typing-msg"
+  msg.innerHTML = `
+    <div class="typing">
+      <span></span><span></span><span></span>
+    </div>
+  `
+  messages.appendChild(msg)
+  scrollChat()
+  return msg
+}
+
+function removerDigitando(el){
+  if(el) el.remove()
+}
+
+
+
+/* 🔥 BOT COM DELAY (ALTERADO) */
+async function addBotMessage(text){
+
+  const digitando = mostrarDigitando()
+
+  const tempo = 700 + Math.random()*900
+
+  await new Promise(r => setTimeout(r, tempo))
+
+  removerDigitando(digitando)
+
+  const msg = document.createElement("div")
+  msg.className = "msg bot"
   msg.innerHTML = text + `<div class="time">${hora()}</div>`
   messages.appendChild(msg)
   scrollChat()
 }
 
-function addBotMessage(text){
+
+
+/* MENSAGENS */
+function addUserMessage(text){
   const msg = document.createElement("div")
-  msg.className = "msg bot"
+  msg.className = "msg user"
   msg.innerHTML = text + `<div class="time">${hora()}</div>`
   messages.appendChild(msg)
   scrollChat()
