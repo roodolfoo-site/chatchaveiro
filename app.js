@@ -17,44 +17,21 @@ let etapa = "inicio"
 
 const tecnicoFixo = { nome: "Antonio Carlos" }
 
-const tempos = [
-  "15 a 20 minutos",
-  "18 a 25 minutos",
-  "20 a 30 minutos"
-]
-
 
 
 /* 🔥 IDENTIFICAR VALOR */
 function definirValor(texto){
-
   const t = texto.toLowerCase()
 
-  if(
-    t.includes("eletrônica") ||
-    t.includes("eletronica") ||
-    t.includes("digital") ||
-    t.includes("senha") ||
-    t.includes("biometria")
-  ){
+  if(t.includes("eletronica") || t.includes("digital") || t.includes("senha")){
     return 250
   }
 
-  if(
-    t.includes("perdi a chave") ||
-    t.includes("perda") ||
-    t.includes("codificada") ||
-    t.includes("canivete") ||
-    t.includes("chave nova")
-  ){
+  if(t.includes("perdi") || t.includes("codificada")){
     return 250
   }
 
-  if(
-    t.includes("quebrou") ||
-    t.includes("quebrada") ||
-    t.includes("fechadura")
-  ){
+  if(t.includes("quebrou") || t.includes("fechadura")){
     return 180
   }
 
@@ -63,24 +40,15 @@ function definirValor(texto){
 
 
 
-/* 🚨 ENVIA LEAD PRO BACKEND */
+/* 🚨 ENVIA LEAD */
 async function enviarLead(){
-
   try{
     await fetch("/lead",{
       method:"POST",
       headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify({
-        nome: cliente.nome,
-        telefone: cliente.telefone,
-        bairro: cliente.bairro,
-        problema: cliente.problema
-      })
+      body: JSON.stringify(cliente)
     })
-  }catch(e){
-    console.log("Erro ao enviar lead:", e)
-  }
-
+  }catch(e){}
 }
 
 
@@ -148,54 +116,20 @@ function addBotImage(text){
 function mostrarPix(valor){
 
   const metade = valor / 2
-  const payload = CHAVE_PIX
 
-  const msg=document.createElement("div")
-  msg.className="msg bot"
+  addBotMessage(`Valor do serviço: R$${valor}`)
 
-  msg.innerHTML=`
-  <div style="text-align:center">
+  setTimeout(()=>{
+    addBotMessage("Para o deslocamento do técnico e evitar desistência, é feito o pagamento de 50% antecipado.")
+  },1000)
 
-    <div style="margin-bottom:8px;font-weight:600">
-      Pagamento via PIX
-    </div>
+  setTimeout(()=>{
+    addBotMessage("Esse valor é abatido do total, pode ficar tranquilo 👍")
+  },2000)
 
-    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${payload}" 
-    style="border-radius:10px;margin-bottom:10px;">
-
-    <div style="margin-bottom:8px;font-size:14px">
-      Valor do serviço: <b>R$${valor}</b><br>
-      Para envio do técnico: <b>R$${metade}</b>
-    </div>
-
-    <div style="background:#f2f2f2;padding:8px;border-radius:8px;font-size:12px;word-break:break-all;margin-bottom:8px">
-      ${payload}
-    </div>
-
-    <button onclick="copiarPix('${payload}')" style="
-      background:#25D366;
-      color:white;
-      border:none;
-      padding:10px 14px;
-      border-radius:8px;
-      cursor:pointer;
-      font-weight:600;
-    ">
-      Copiar PIX
-    </button>
-
-  </div>
-
-  <div class="time">${hora()}</div>
-  `
-
-  messages.appendChild(msg)
-  scrollChat()
-}
-
-function copiarPix(texto){
-  navigator.clipboard.writeText(texto)
-  alert("PIX copiado 👍")
+  setTimeout(()=>{
+    addBotMessage(`Chave PIX: ${CHAVE_PIX}`)
+  },3000)
 }
 
 
@@ -212,7 +146,6 @@ async function send(){
 
 
   /* INÍCIO */
-
   if(etapa==="inicio"){
 
     cliente.problema = texto
@@ -232,24 +165,18 @@ async function send(){
 
 
   /* ENDEREÇO */
-
   if(etapa==="endereco"){
 
-    const partes = texto.split(" ")
-
-    if(!texto.match(/\d+/) || partes.length < 3){
-      addBotMessage("Preciso de rua, número e bairro 👍")
+    if(!texto.match(/\d+/) || texto.split(" ").length < 3){
+      addBotMessage("Preciso da rua, número e bairro para localizar o técnico mais próximo com precisão 👍")
       return
     }
 
     cliente.endereco = texto
-    cliente.bairro = partes[partes.length - 1]
-
-    addBotMessage(`Já identifiquei sua região (${cliente.bairro}) 👍`)
 
     setTimeout(()=>{
       addBotMessage("Qual é o seu nome?")
-    },1200)
+    },1000)
 
     etapa="nome"
     return
@@ -258,15 +185,13 @@ async function send(){
 
 
   /* NOME */
-
   if(etapa==="nome"){
 
     cliente.nome = texto
-    addBotMessage(`Prazer ${cliente.nome} 😊`)
 
     setTimeout(()=>{
       addBotMessage("Me passa seu telefone 📞")
-    },1200)
+    },1000)
 
     etapa="telefone"
     return
@@ -275,41 +200,21 @@ async function send(){
 
 
   /* TELEFONE */
-
   if(etapa==="telefone"){
 
     cliente.telefone = texto
 
-    // 🔥 ENVIA PARA Z-API (BACKEND)
     enviarLead()
 
-    const tempo = tempos[Math.floor(Math.random()*tempos.length)]
-
-    addBotMessage("Já tenho um técnico próximo 👍")
+    addBotMessage("Estou localizando um técnico próximo...")
 
     setTimeout(()=>{
-      addBotImage(`✔ Técnico a caminho<br><br>Nome: ${tecnicoFixo.nome}`)
-    },1500)
+      addBotImage(`✔ Técnico disponível<br><br>Nome: ${tecnicoFixo.nome}`)
+    },25000)
 
     setTimeout(()=>{
-      addBotMessage(`Ele chega em aproximadamente ${tempo}.`)
-    },3000)
-
-    setTimeout(()=>{
-      addBotMessage("Esse tipo de serviço normalmente custa entre R$120 e R$250.")
-    },4500)
-
-    setTimeout(()=>{
-      addBotMessage(`No seu caso, fica em R$${cliente.valor}.`)
-    },6000)
-
-    setTimeout(()=>{
-      addBotMessage("Consigo te encaixar agora porque tenho um técnico finalizando próximo.")
-    },7500)
-
-    setTimeout(()=>{
-      addBotMessage("O técnico já está pronto pra sair, só preciso da confirmação de 50% pra liberar ele 👍")
-    },9000)
+      addBotMessage("Posso reservar para o técnico ir até você?")
+    },26000)
 
     etapa="confirmacao"
     return
@@ -318,7 +223,6 @@ async function send(){
 
 
   /* CONFIRMAÇÃO */
-
   if(etapa==="confirmacao"){
 
     const msg = texto.toLowerCase()
@@ -328,15 +232,25 @@ async function send(){
       mostrarPix(cliente.valor)
 
       setTimeout(()=>{
-        addBotMessage("Assim que enviar o comprovante, já libero o técnico 👍")
-      },2000)
+        addBotMessage("Assim que enviar o comprovante, já libero o atendimento 👍")
+      },4000)
 
       etapa="aguardando_pagamento"
       return
     }
 
-    addBotMessage("Posso já liberar o técnico pra ir até você agora?")
+    addBotMessage("Posso reservar para o técnico ir até você?")
     return
   }
 
 }
+
+
+
+/* ENTER FUNCIONANDO */
+input.addEventListener("keydown",function(e){
+  if(e.key==="Enter"){
+    e.preventDefault()
+    send()
+  }
+})
