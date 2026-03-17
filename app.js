@@ -27,6 +27,25 @@ let tempoChegada="20 a 30 minutos"
 
 
 
+/* IA (NOVO) */
+async function respostaIA(texto){
+try{
+const res=await fetch("/chat",{
+method:"POST",
+headers:{ "Content-Type":"application/json" },
+body:JSON.stringify({ message:texto })
+})
+
+const data=await res.json()
+return data.reply
+
+}catch{
+return "Já vou te ajudar 👍"
+}
+}
+
+
+
 /* IDENTIFICAR SERVIÇO */
 
 function identificarServico(msg){
@@ -145,14 +164,6 @@ scrollChat()
 return msg
 }
 
-function responder(texto){
-const t=typing()
-setTimeout(()=>{
-t.remove()
-addBotMessage(texto)
-},1200)
-}
-
 
 
 /* ENVIO */
@@ -169,25 +180,31 @@ const msg=texto.toLowerCase()
 
 
 
-/* IDENTIFICAR SERVIÇO */
+/* PRIMEIRA ETAPA COM IA */
 
 if(etapa==="identificar_servico"){
+
+const t=typing()
+
+const resposta = await respostaIA(texto)
+
+t.remove()
+addBotMessage(resposta)
+
+/* CONTINUA SEU FLUXO NORMAL */
 
 const servico=identificarServico(msg)
 
 if(!servico){
-
-responder("Entendi 👍 me diga se é abertura, conserto ou cópia de chave.")
+setTimeout(()=>{
+addBotMessage("Você precisa de abertura, conserto ou cópia de chave?")
+},1500)
 return
 }
 
 cliente.servico=servico
 
 const tipoDetectado=identificarTipo(msg)
-
-responder("Entendi 👍 vamos resolver isso agora.")
-
-/* já sabe local */
 
 if(tipoDetectado){
 cliente.tipoLocal=tipoDetectado
@@ -199,8 +216,6 @@ addBotMessage("Pode me informar o endereço completo? (rua e número)")
 etapa="endereco"
 return
 }
-
-/* perguntar tipo */
 
 setTimeout(()=>{
 addBotMessage("Esse atendimento é em casa, empresa ou veículo?")
@@ -218,7 +233,7 @@ if(etapa==="tipo_local"){
 
 cliente.tipoLocal=texto
 
-responder("Perfeito 👍")
+addBotMessage("Perfeito 👍")
 
 setTimeout(()=>{
 addBotMessage("Pode me informar o endereço completo? (rua e número)")
@@ -234,19 +249,14 @@ return
 
 if(etapa==="endereco"){
 
-/* valida numero */
-
 if(!texto.match(/\d+/)){
-responder("Preciso do endereço completo para localizar o técnico.")
-setTimeout(()=>{
-addBotMessage("Pode informar rua e número?")
-},1500)
+addBotMessage("Preciso do endereço completo (rua e número).")
 return
 }
 
 cliente.endereco=texto
 
-responder("Perfeito 👍 já localizei sua região.")
+addBotMessage("Perfeito 👍 já localizei sua região.")
 
 setTimeout(()=>{
 addBotMessage("Qual é o seu nome?")
@@ -264,7 +274,7 @@ if(etapa==="nome"){
 
 cliente.nome=texto
 
-responder(`Prazer ${cliente.nome} 😊`)
+addBotMessage(`Prazer ${cliente.nome} 😊`)
 
 setTimeout(()=>{
 addBotMessage("Agora me informe seu telefone 📞")
@@ -287,25 +297,21 @@ tempoChegada=tempos[Math.floor(Math.random()*tempos.length)]
 
 const valor=calcularValorServico(cliente.tipoLocal)
 
-responder("Perfeito 👍")
-
-setTimeout(()=>{
 addBotMessage("Já encontrei um técnico próximo de você.")
-},1500)
 
 setTimeout(()=>{
 addBotImage(`✔ Técnico disponível<br><br>
 Nome: ${tecnicoAtual.nome}<br>
 Valor: R$${valor}`)
-},3500)
+},2000)
 
 setTimeout(()=>{
 addBotMessage(`Ele chega em aproximadamente ${tempoChegada}.`)
-},5500)
+},3500)
 
 setTimeout(()=>{
 addBotMessage("Posso confirmar esse atendimento para você agora?")
-},7000)
+},5000)
 
 etapa="confirmacao"
 return
