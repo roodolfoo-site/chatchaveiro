@@ -7,6 +7,7 @@ const input = document.getElementById("text")
 
 let cliente = {
   endereco: "",
+  bairro: "",
   telefone: "",
   nome: ""
 }
@@ -124,7 +125,7 @@ async function send(){
     },1000)
 
     setTimeout(()=>{
-      addBotMessage("Já vou verificar um técnico próximo pra você 👍 Me passa o endereço completo (rua e número).")
+      addBotMessage("Já vou verificar um técnico próximo 👍 Me passa seu endereço completo (rua, número e bairro).")
     },2000)
 
     etapa="endereco"
@@ -137,14 +138,19 @@ async function send(){
 
   if(etapa==="endereco"){
 
-    if(!texto.match(/\d+/)){
-      addBotMessage("Preciso do endereço com número pra localizar certinho 👍")
+    const partes = texto.split(" ")
+
+    if(!texto.match(/\d+/) || partes.length < 3){
+      addBotMessage("Preciso de rua, número e bairro pra localizar certinho 👍")
       return
     }
 
     cliente.endereco = texto
 
-    addBotMessage("Perfeito 👍 já estou puxando aqui sua localização...")
+    // tenta pegar bairro (última palavra)
+    cliente.bairro = partes[partes.length - 1]
+
+    addBotMessage(`Perfeito 👍 já identifiquei sua região (${cliente.bairro}).`)
 
     setTimeout(()=>{
       addBotMessage("Tem um técnico finalizando um atendimento bem próximo de você.")
@@ -187,10 +193,10 @@ async function send(){
     tecnicoAtual = tecnicos[Math.floor(Math.random()*tecnicos.length)]
     const tempo = tempos[Math.floor(Math.random()*tempos.length)]
 
-    addBotMessage("Já confirmei um técnico disponível pra você.")
+    addBotMessage("Já confirmei um técnico próximo da sua região.")
 
     setTimeout(()=>{
-      addBotImage(`✔ Técnico a caminho<br><br>
+      addBotImage(`✔ Técnico já a caminho<br><br>
       Nome: ${tecnicoAtual.nome}`)
     },1500)
 
@@ -199,7 +205,7 @@ async function send(){
     },3000)
 
     setTimeout(()=>{
-      addBotMessage("Pra garantir o envio imediato, preciso só confirmar a abertura do atendimento 👍")
+      addBotMessage("Pra garantir o envio imediato, preciso só confirmar a abertura 👍")
     },4500)
 
     etapa="confirmacao"
@@ -225,16 +231,20 @@ async function send(){
       addBotMessage("Perfeito 👍 já estou liberando o técnico pra você.")
 
       setTimeout(()=>{
+        addBotMessage("Ele já está finalizando outro atendimento e entra na sua rota em seguida.")
+      },1200)
+
+      setTimeout(()=>{
         addBotMessage(`Para garantir o deslocamento, é feito um sinal de R$${VALOR_SINAL}.`)
-      },1500)
+      },2500)
 
       setTimeout(()=>{
         addBotMessage(`Chave PIX: ${CHAVE_PIX}`)
-      },3000)
+      },4000)
 
       setTimeout(()=>{
-        addBotMessage("Assim que me enviar o comprovante, libero imediatamente o técnico na sua rota.")
-      },4500)
+        addBotMessage("Assim que me enviar o comprovante, libero imediatamente o técnico 👍")
+      },5500)
 
       etapa="aguardando_pagamento"
       return
