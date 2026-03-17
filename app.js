@@ -115,7 +115,6 @@ const resposta = await respostaIA(texto)
 t.remove()
 addBotMessage(resposta)
 
-/* segue direto */
 setTimeout(()=>{
 addBotMessage("Pode me informar o endereço completo? (rua e número)")
 },1200)
@@ -192,6 +191,50 @@ addBotMessage("Posso confirmar esse atendimento para você agora?")
 },4500)
 
 etapa="confirmacao"
+return
+}
+
+
+
+/* CONFIRMAÇÃO (CORRIGIDO) */
+
+if(etapa==="confirmacao"){
+
+const msg = texto.toLowerCase()
+
+if(
+msg.includes("sim") ||
+msg.includes("pode") ||
+msg.includes("confirmar") ||
+msg.includes("ok") ||
+msg.includes("quero")
+){
+
+addBotMessage("Perfeito 👍 estou confirmando o atendimento.")
+
+setTimeout(()=>{
+addBotMessage("O técnico já foi acionado e está a caminho 🚗")
+},1500)
+
+setTimeout(()=>{
+addBotMessage("Qualquer dúvida pode me chamar por aqui.")
+},3000)
+
+etapa="finalizado"
+return
+}
+
+if(
+msg.includes("não") ||
+msg.includes("nao") ||
+msg.includes("cancelar")
+){
+addBotMessage("Sem problema 👍 se precisar é só me chamar.")
+etapa="finalizado"
+return
+}
+
+addBotMessage("Deseja que eu confirme o atendimento agora?")
 return
 }
 
