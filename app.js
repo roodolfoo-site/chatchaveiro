@@ -14,7 +14,6 @@ let cliente = {
 
 let etapa = "inicio"
 
-// 🔥 AGORA SÓ UM TÉCNICO
 const tecnicoFixo = { nome: "Antonio Carlos" }
 
 const tempos = [
@@ -183,14 +182,15 @@ async function send(){
 
   if(etapa==="endereco"){
 
-    const partes = texto.split(" ")
+    const textoLimpo = texto.replace(/\s+/g, " ").trim()
+    const partes = textoLimpo.split(" ")
 
-    if(!texto.match(/\d+/) || partes.length < 3){
-      addBotMessage("Preciso de rua, número e bairro pra localizar certinho 👍")
+    if(!textoLimpo.match(/\d+/) || partes.length < 3){
+      addBotMessage("Me passa rua, número e bairro pra localizar certinho 👍")
       return
     }
 
-    cliente.endereco = texto
+    cliente.endereco = textoLimpo
     cliente.bairro = partes[partes.length - 1]
 
     addBotMessage(`Perfeito 👍 já identifiquei sua região (${cliente.bairro}).`)
@@ -213,7 +213,7 @@ async function send(){
 
   if(etapa==="nome"){
 
-    cliente.nome = texto
+    cliente.nome = texto.trim()
 
     addBotMessage(`Prazer ${cliente.nome} 😊`)
 
@@ -231,7 +231,7 @@ async function send(){
 
   if(etapa==="telefone"){
 
-    cliente.telefone = texto
+    cliente.telefone = texto.trim()
 
     const tempo = tempos[Math.floor(Math.random()*tempos.length)]
 
@@ -247,7 +247,7 @@ async function send(){
     },3000)
 
     setTimeout(()=>{
-      addBotMessage("Pra garantir o envio imediato, preciso só confirmar a abertura 👍")
+      addBotMessage("Pra garantir o envio imediato, preciso só confirmar 👍")
     },4500)
 
     etapa="confirmacao"
@@ -273,7 +273,7 @@ async function send(){
       addBotMessage("Perfeito 👍 já estou liberando o técnico pra você.")
 
       setTimeout(()=>{
-        addBotMessage("Ele já está finalizando outro atendimento e entra na sua rota em seguida.")
+        addBotMessage("Ele já está finalizando outro atendimento e entra na sua rota.")
       },1200)
 
       setTimeout(()=>{
@@ -285,7 +285,7 @@ async function send(){
       },4000)
 
       setTimeout(()=>{
-        addBotMessage("Assim que me enviar o comprovante, libero imediatamente o técnico 👍")
+        addBotMessage("Assim que enviar o comprovante, libero imediatamente 👍")
       },5500)
 
       etapa="aguardando_pagamento"
@@ -307,7 +307,7 @@ async function send(){
   /* PAGAMENTO */
 
   if(etapa==="aguardando_pagamento"){
-    addBotMessage("Assim que você enviar o comprovante, já libero o técnico imediatamente 👍")
+    addBotMessage("Assim que você enviar o comprovante, já libero o técnico 👍")
     return
   }
 
