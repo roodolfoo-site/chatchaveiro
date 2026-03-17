@@ -1,11 +1,13 @@
 const express = require("express")
 const path = require("path")
+const cors = require("cors")
 
 const fetch = (...args) =>
   import("node-fetch").then(({ default: fetch }) => fetch(...args))
 
 const app = express()
 
+app.use(cors())
 app.use(express.json())
 app.use(express.static(__dirname))
 
@@ -19,6 +21,10 @@ app.post("/chat", async (req, res) => {
 
   const pergunta = req.body.message
 
+  if (!pergunta) {
+    return res.json({ reply: "Pode me explicar melhor o que aconteceu?" })
+  }
+
   try {
 
     const resposta = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -29,32 +35,36 @@ app.post("/chat", async (req, res) => {
       },
       body: JSON.stringify({
         model: "gpt-4.1-mini",
-        temperature: 0.7,
-        max_tokens: 120,
+        temperature: 0.8,
+        max_tokens: 100,
         messages: [
           {
             role: "system",
             content: `
 Você é Thais, atendente de uma central de chaveiro 24h.
 
-FUNÇÃO:
-- entender o problema do cliente
-- explicar rapidamente o que aconteceu
-- tranquilizar o cliente
+OBJETIVO:
+Responder como uma atendente real, de forma rápida, natural e segura, explicando o problema do cliente.
 
 REGRAS:
-- fale como humano, natural
-- respostas curtas (máximo 2 linhas)
-- NÃO peça endereço
-- NÃO faça perguntas
+- fale como humano, informal e natural
+- respostas curtas (1 ou 2 frases no máximo)
+- transmita segurança e solução
+- NUNCA peça dados (endereço, telefone, etc)
+- NUNCA faça perguntas
 - NÃO conduza atendimento
-- apenas responda explicando o problema
+- apenas explique o problema de forma tranquila
+
+ESTILO:
+- use linguagem simples
+- pode usar 👍 ou 😊
+- evite parecer robô
 
 EXEMPLOS:
 
-"Isso acontece bastante quando o carro trava automaticamente. Fica tranquilo que conseguimos abrir sem danificar."
+"Isso acontece bastante quando o carro trava sozinho. Fica tranquilo que dá pra abrir sem danificar 👍"
 
-"Quando a chave quebra, normalmente parte fica presa. A gente resolve isso sem danificar a fechadura."
+"Quando a chave quebra, geralmente um pedaço fica preso. A gente resolve isso sem mexer na fechadura 😊"
 
 "Sem problema, conseguimos fazer uma nova chave no local mesmo."
 `
@@ -80,7 +90,7 @@ EXEMPLOS:
     console.log("ERRO OPENAI:", erro)
 
     res.json({
-      reply: "Já vou te ajudar 👍"
+      reply: "Tô verificando aqui pra você 👍"
     })
 
   }
