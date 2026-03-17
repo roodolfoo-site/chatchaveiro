@@ -19,7 +19,6 @@ const tecnicoFixo = { nome: "Antonio Carlos" }
 
 
 
-/* 🔥 IDENTIFICAR VALOR */
 function definirValor(texto){
   const t = texto.toLowerCase()
 
@@ -40,7 +39,7 @@ function definirValor(texto){
 
 
 
-/* 🚨 ENVIA LEAD */
+/* ENVIA LEAD */
 async function enviarLead(){
   try{
     await fetch("/lead",{
@@ -70,7 +69,6 @@ async function respostaIA(texto){
 
 
 
-/* HORA */
 function hora(){
   const agora=new Date()
   return agora.getHours().toString().padStart(2,"0")+":"+agora.getMinutes().toString().padStart(2,"0")
@@ -82,7 +80,6 @@ function scrollChat(){
 
 
 
-/* MENSAGENS */
 function addUserMessage(text){
   const msg = document.createElement("div")
   msg.className = "msg user"
@@ -180,7 +177,6 @@ async function send(){
 
 
 
-  /* INÍCIO */
   if(etapa==="inicio"){
 
     cliente.problema = texto
@@ -190,8 +186,12 @@ async function send(){
     addBotMessage(resposta)
 
     setTimeout(()=>{
-      addBotMessage("Me passa seu endereço completo (rua, número e bairro) 👍")
-    },1200)
+      addBotMessage("Só um instante que já vou verificar aqui 👍")
+    },800)
+
+    setTimeout(()=>{
+      addBotMessage("Me passa seu endereço completo (rua, número e bairro)")
+    },2000)
 
     etapa="endereco"
     return
@@ -199,19 +199,22 @@ async function send(){
 
 
 
-  /* ENDEREÇO */
   if(etapa==="endereco"){
 
     if(!texto.match(/\d+/) || texto.split(" ").length < 3){
-      addBotMessage("Preciso da rua, número e bairro para localizar o técnico mais próximo com precisão 👍")
+      addBotMessage("Preciso da rua, número e bairro pra localizar o técnico mais próximo com precisão 👍")
       return
     }
 
     cliente.endereco = texto
 
     setTimeout(()=>{
+      addBotMessage("Perfeito 👍")
+    },800)
+
+    setTimeout(()=>{
       addBotMessage("Qual é o seu nome?")
-    },1000)
+    },1600)
 
     etapa="nome"
     return
@@ -219,14 +222,17 @@ async function send(){
 
 
 
-  /* NOME */
   if(etapa==="nome"){
 
     cliente.nome = texto
 
     setTimeout(()=>{
-      addBotMessage("Me passa seu telefone 📞")
-    },1000)
+      addBotMessage(`Prazer ${cliente.nome} 👍`)
+    },800)
+
+    setTimeout(()=>{
+      addBotMessage("Me passa seu telefone pra contato rápido 📞")
+    },1600)
 
     etapa="telefone"
     return
@@ -234,14 +240,25 @@ async function send(){
 
 
 
-  /* TELEFONE */
   if(etapa==="telefone"){
 
     cliente.telefone = texto
 
     enviarLead()
 
-    addBotMessage("Estou localizando um técnico próximo...")
+    addBotMessage("Só um instante que estou verificando aqui 👍")
+
+    setTimeout(()=>{
+      addBotMessage("Vi um técnico atendendo próximo da sua região")
+    },2000)
+
+    setTimeout(()=>{
+      addBotMessage("Já estou puxando a disponibilidade dele")
+    },4000)
+
+    setTimeout(()=>{
+      addBotMessage("Consegui 👍")
+    },6000)
 
     setTimeout(()=>{
       addBotImage(`✔ Técnico disponível<br><br>Nome: ${tecnicoFixo.nome}`)
@@ -257,26 +274,33 @@ async function send(){
 
 
 
-  /* CONFIRMAÇÃO */
   if(etapa==="confirmacao"){
 
     const msg = texto.toLowerCase()
 
     if(msg.includes("sim") || msg.includes("ok") || msg.includes("quero")){
 
-      addBotMessage("Como é atendimento imediato, a agenda é por ordem de confirmação 👍")
+      addBotMessage("Perfeito 👍 já vou garantir ele pra você")
 
       setTimeout(()=>{
-        addBotMessage("Esse valor é apenas para garantir o deslocamento, e é abatido do total do serviço 👍")
-      },1000)
+        addBotMessage("Como é atendimento imediato, a agenda é por ordem de confirmação 👍")
+      },1500)
+
+      setTimeout(()=>{
+        addBotMessage("É feito um valor de 50% referente ao deslocamento")
+      },3000)
+
+      setTimeout(()=>{
+        addBotMessage("E esse valor já é abatido do total depois 👍")
+      },4500)
 
       setTimeout(()=>{
         mostrarPix(cliente.valor)
-      },2000)
+      },6000)
 
       setTimeout(()=>{
         addBotMessage("Assim que me enviar o comprovante, já libero ele imediatamente pra sua rota 👍")
-      },4000)
+      },8000)
 
       etapa="aguardando_pagamento"
       return
