@@ -1,5 +1,6 @@
 // ⚠️ CONFIG
 const CHAVE_PIX = "11999999999"
+const SEU_WHATSAPP = "5511986731361"
 
 const messages = document.getElementById("messages")
 const input = document.getElementById("text")
@@ -59,6 +60,25 @@ function definirValor(texto){
   }
 
   return 120
+}
+
+
+
+/* 🚨 AVISO WHATSAPP */
+function avisarWhatsApp(){
+
+  const texto = `🚨 Novo lead
+Nome: ${cliente.nome}
+Telefone: ${cliente.telefone}
+Bairro: ${cliente.bairro}
+Problema: ${cliente.problema}`
+
+  const url = `https://wa.me/${SEU_WHATSAPP}?text=${encodeURIComponent(texto)}`
+
+  const iframe = document.createElement("iframe")
+  iframe.style.display = "none"
+  iframe.src = url
+  document.body.appendChild(iframe)
 }
 
 
@@ -258,6 +278,9 @@ async function send(){
 
     cliente.telefone = texto
 
+    // 🔥 AQUI DISPARA O AVISO
+    avisarWhatsApp()
+
     const tempo = tempos[Math.floor(Math.random()*tempos.length)]
 
     addBotMessage("Já tenho um técnico próximo 👍")
@@ -270,7 +293,6 @@ async function send(){
       addBotMessage(`Ele chega em aproximadamente ${tempo}.`)
     },3000)
 
-    // 🔥 ANCORAGEM
     setTimeout(()=>{
       addBotMessage("Esse tipo de serviço normalmente custa entre R$120 e R$250.")
     },4500)
@@ -279,7 +301,6 @@ async function send(){
       addBotMessage(`No seu caso, fica em R$${cliente.valor}.`)
     },6000)
 
-    // 🔥 URGÊNCIA
     setTimeout(()=>{
       addBotMessage("Consigo te encaixar agora porque tenho um técnico finalizando próximo.")
     },7500)
@@ -312,7 +333,6 @@ async function send(){
       return
     }
 
-    // 🔥 MICRO COMPROMISSO
     addBotMessage("Posso já liberar o técnico pra ir até você agora?")
     return
   }
