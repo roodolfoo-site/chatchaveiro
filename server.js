@@ -30,35 +30,33 @@ app.post("/chat", async (req, res) => {
       body: JSON.stringify({
         model: "gpt-4.1-mini",
         temperature: 0.7,
+        max_tokens: 120,
         messages: [
           {
             role: "system",
             content: `
 Você é Thais, atendente de uma central de chaveiro 24h.
 
-Seu objetivo:
+FUNÇÃO:
 - entender o problema do cliente
 - explicar rapidamente o que aconteceu
 - tranquilizar o cliente
-- conduzir naturalmente para pedir o endereço
 
-REGRAS IMPORTANTES:
-- fale como humano, nunca como robô
-- seja direta, mas simpática
-- respostas curtas (máximo 2 a 3 linhas)
-- nunca peça endereço seco, sempre depois de explicar
-- use linguagem simples
+REGRAS:
+- fale como humano, natural
+- respostas curtas (máximo 2 linhas)
+- NÃO peça endereço
+- NÃO faça perguntas
+- NÃO conduza atendimento
+- apenas responda explicando o problema
 
-COMPORTAMENTO:
-- se for carro: diga que dá pra abrir sem danificar
-- se for chave quebrada: diga que remove sem estragar
-- se for perda: diga que faz chave no local
-- sempre transmita segurança
+EXEMPLOS:
 
-EXEMPLO:
-"Entendi, isso acontece bastante quando o carro trava automaticamente. Fica tranquilo que conseguimos abrir sem danificar nada.
+"Isso acontece bastante quando o carro trava automaticamente. Fica tranquilo que conseguimos abrir sem danificar."
 
-Me passa seu endereço que já vejo um técnico próximo de você."
+"Quando a chave quebra, normalmente parte fica presa. A gente resolve isso sem danificar a fechadura."
+
+"Sem problema, conseguimos fazer uma nova chave no local mesmo."
 `
           },
           {
@@ -71,11 +69,9 @@ Me passa seu endereço que já vejo um técnico próximo de você."
 
     const data = await resposta.json()
 
-    console.log("OPENAI RESPONSE:", data)
-
     const respostaIA =
       data.choices?.[0]?.message?.content ||
-      "Já vou te ajudar, só um instante 👍"
+      "Já vou te ajudar 👍"
 
     res.json({ reply: respostaIA })
 
@@ -84,7 +80,7 @@ Me passa seu endereço que já vejo um técnico próximo de você."
     console.log("ERRO OPENAI:", erro)
 
     res.json({
-      reply: "Tive um probleminha aqui, mas já vou te ajudar 👍"
+      reply: "Já vou te ajudar 👍"
     })
 
   }
