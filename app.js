@@ -1,5 +1,5 @@
 // ⚠️ CONFIG
-const CHAVE_PIX = "11999999999"
+const CHAVE_PIX = "11940571781"
 
 const messages = document.getElementById("messages")
 const input = document.getElementById("text")
@@ -16,6 +16,12 @@ let cliente = {
 let etapa = "inicio"
 
 const tecnicoFixo = { nome: "Antonio Carlos" }
+
+const tempos = [
+  "15 a 20 minutos",
+  "18 a 25 minutos",
+  "20 a 30 minutos"
+]
 
 
 
@@ -69,6 +75,14 @@ async function respostaIA(texto){
 
 
 
+/* 🔥 DETECTA DÚVIDA */
+function ehDuvida(texto){
+  const t = texto.toLowerCase()
+  return t.includes("quanto") || t.includes("valor") || t.includes("preço")
+}
+
+
+
 function hora(){
   const agora=new Date()
   return agora.getHours().toString().padStart(2,"0")+":"+agora.getMinutes().toString().padStart(2,"0")
@@ -80,15 +94,11 @@ function scrollChat(){
 
 
 
-/* 🔥 DIGITANDO (NOVO) */
+/* DIGITANDO */
 function mostrarDigitando(){
   const msg = document.createElement("div")
   msg.className = "msg bot typing-msg"
-  msg.innerHTML = `
-    <div class="typing">
-      <span></span><span></span><span></span>
-    </div>
-  `
+  msg.innerHTML = `<div class="typing"><span></span><span></span><span></span></div>`
   messages.appendChild(msg)
   scrollChat()
   return msg
@@ -100,11 +110,10 @@ function removerDigitando(el){
 
 
 
-/* 🔥 BOT COM DELAY (ALTERADO) */
+/* BOT */
 async function addBotMessage(text){
 
   const digitando = mostrarDigitando()
-
   const tempo = 700 + Math.random()*900
 
   await new Promise(r => setTimeout(r, tempo))
@@ -120,7 +129,7 @@ async function addBotMessage(text){
 
 
 
-/* MENSAGENS */
+/* USER */
 function addUserMessage(text){
   const msg = document.createElement("div")
   msg.className = "msg user"
@@ -164,7 +173,7 @@ function mostrarPix(valor){
     <div style="margin-bottom:8px;font-size:14px">
       Esse tipo de serviço normalmente custa entre <b>R$120 e R$250</b>.<br><br>
       No seu caso: <b>R$${valor}</b><br>
-      Para garantir o atendimento imediato: <b>R$${metade}</b>
+      Para o deslocamento: <b>R$${metade}</b>
     </div>
 
     <div style="background:#f2f2f2;padding:8px;border-radius:8px;font-size:12px;word-break:break-all;margin-bottom:8px">
@@ -209,6 +218,16 @@ async function send(){
   input.value = ""
 
 
+  // 🔥 RESPONDE DÚVIDA EM QUALQUER ETAPA
+  if(ehDuvida(texto)){
+    addBotMessage(`Esse tipo de serviço normalmente fica entre R$120 e R$250 👍`)
+    setTimeout(()=>{
+      addBotMessage(`No seu caso específico, fica em torno de R$${cliente.valor}`)
+    },1200)
+    return
+  }
+
+
 
   if(etapa==="inicio"){
 
@@ -219,7 +238,7 @@ async function send(){
     addBotMessage(resposta)
 
     setTimeout(()=>{
-      addBotMessage("Só um instante que já vou verificar aqui 👍")
+      addBotMessage("Já vou verificar um técnico próximo pra você 👍")
     },800)
 
     setTimeout(()=>{
@@ -279,27 +298,25 @@ async function send(){
 
     enviarLead()
 
+    const tempo = tempos[Math.floor(Math.random()*tempos.length)]
+
     addBotMessage("Só um instante que estou verificando aqui 👍")
 
     setTimeout(()=>{
-      addBotMessage("Vi um técnico atendendo próximo da sua região")
+      addBotMessage(`Já encontrei um técnico disponível 👍`)
     },2000)
 
     setTimeout(()=>{
-      addBotMessage("Já estou puxando a disponibilidade dele")
-    },4000)
-
-    setTimeout(()=>{
-      addBotMessage("Consegui 👍")
-    },6000)
+      addBotMessage(`Ele chega em aproximadamente ${tempo}`)
+    },3500)
 
     setTimeout(()=>{
       addBotImage(`✔ Técnico disponível<br><br>Nome: ${tecnicoFixo.nome}`)
-    },25000)
+    },5000)
 
     setTimeout(()=>{
-      addBotMessage("Posso reservar agora? Tenho ele disponível nesse momento 👍")
-    },26000)
+      addBotMessage("Posso reservar agora pra ele ir até você?")
+    },6500)
 
     etapa="confirmacao"
     return
@@ -316,24 +333,20 @@ async function send(){
       addBotMessage("Perfeito 👍 já vou garantir ele pra você")
 
       setTimeout(()=>{
-        addBotMessage("Como é atendimento imediato, a agenda é por ordem de confirmação 👍")
+        addBotMessage("Pra deslocar o técnico e evitar cancelamentos, é feito 50% antecipado 👍")
       },1500)
 
       setTimeout(()=>{
-        addBotMessage("É feito um valor de 50% referente ao deslocamento")
+        addBotMessage("E esse valor já é abatido do total depois, pode ficar tranquilo 👍")
       },3000)
 
       setTimeout(()=>{
-        addBotMessage("E esse valor já é abatido do total depois 👍")
+        mostrarPix(cliente.valor)
       },4500)
 
       setTimeout(()=>{
-        mostrarPix(cliente.valor)
-      },6000)
-
-      setTimeout(()=>{
-        addBotMessage("Assim que me enviar o comprovante, já libero ele imediatamente pra sua rota 👍")
-      },8000)
+        addBotMessage("Assim que me enviar o comprovante, já libero ele imediatamente 👍")
+      },6500)
 
       etapa="aguardando_pagamento"
       return
