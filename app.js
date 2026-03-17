@@ -30,7 +30,6 @@ function definirValor(texto){
 
   const t = texto.toLowerCase()
 
-  // 🔥 FECHADURA ELETRÔNICA = 250
   if(
     t.includes("eletrônica") ||
     t.includes("eletronica") ||
@@ -41,7 +40,6 @@ function definirValor(texto){
     return 250
   }
 
-  // complexo
   if(
     t.includes("perdi a chave") ||
     t.includes("perda") ||
@@ -52,7 +50,6 @@ function definirValor(texto){
     return 250
   }
 
-  // médio
   if(
     t.includes("quebrou") ||
     t.includes("quebrada") ||
@@ -61,7 +58,6 @@ function definirValor(texto){
     return 180
   }
 
-  // simples
   return 120
 }
 
@@ -274,13 +270,23 @@ async function send(){
       addBotMessage(`Ele chega em aproximadamente ${tempo}.`)
     },3000)
 
+    // 🔥 ANCORAGEM
     setTimeout(()=>{
-      addBotMessage(`O valor do serviço fica em torno de R$${cliente.valor}.`)
+      addBotMessage("Esse tipo de serviço normalmente custa entre R$120 e R$250.")
     },4500)
 
     setTimeout(()=>{
-      addBotMessage("Para o deslocamento do técnico e evitar cancelamentos, é feito o pagamento de 50% antecipado 👍")
+      addBotMessage(`No seu caso, fica em R$${cliente.valor}.`)
     },6000)
+
+    // 🔥 URGÊNCIA
+    setTimeout(()=>{
+      addBotMessage("Consigo te encaixar agora porque tenho um técnico finalizando próximo.")
+    },7500)
+
+    setTimeout(()=>{
+      addBotMessage("O técnico já está pronto pra sair, só preciso da confirmação de 50% pra liberar ele 👍")
+    },9000)
 
     etapa="confirmacao"
     return
@@ -306,7 +312,8 @@ async function send(){
       return
     }
 
-    addBotMessage("Posso confirmar o envio do técnico pra você?")
+    // 🔥 MICRO COMPROMISSO
+    addBotMessage("Posso já liberar o técnico pra ir até você agora?")
     return
   }
 
