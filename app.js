@@ -295,16 +295,15 @@ async function send(){
 
     setTimeout(()=>{
       addBotMessage(`Já encontrei um técnico disponível 👍`)
-    },2000)
+    },1500)
 
-    // 🔥 ALTERAÇÃO AQUI (tempo junto na foto)
     setTimeout(()=>{
       addBotImage(`✔ Técnico disponível<br><br>Nome: ${tecnicoFixo.nome}<br>Chegada: ${tempo}`)
-    },5000)
+    },3200)
 
     setTimeout(()=>{
       addBotMessage("Posso reservar agora pra ele ir até você?")
-    },6500)
+    },4200)
 
     etapa="confirmacao"
     return
