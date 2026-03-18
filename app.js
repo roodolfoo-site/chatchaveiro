@@ -116,7 +116,6 @@ async function addBotMessage(text){
 
   const digitando = mostrarDigitando()
 
-  // 🔥 TEMPO DINÂMICO (ULTRA CONVERSÃO)
   let base = 700
 
   if(window.velocidadeCliente){
@@ -143,7 +142,6 @@ async function addBotMessage(text){
 /* USER */
 function addUserMessage(text){
 
-  // 🔥 CAPTA COMPORTAMENTO DO CLIENTE
   const agora = Date.now()
   const tempoResposta = agora - ultimoTempoResposta
   ultimoTempoResposta = agora
@@ -232,9 +230,23 @@ async function send(){
   addUserMessage(texto)
   input.value = ""
 
+  // 🔥 CORREÇÃO DO VALOR (AQUI)
   if(ehDuvida(texto)){
-    const resposta = await respostaIA(texto)
-    addBotMessage(resposta)
+
+    const t = texto.toLowerCase()
+
+    if(t.includes("quanto") || t.includes("valor") || t.includes("preço")){
+      
+      addBotMessage(`No seu caso, o valor fica em R$${cliente.valor} 👍`)
+
+      setTimeout(()=>{
+        addBotMessage(`Para o deslocamento, é R$${cliente.valor/2} (já abatido depois)`)
+      },1200)
+
+    }else{
+      const resposta = await respostaIA(texto)
+      addBotMessage(resposta)
+    }
 
     setTimeout(()=>{
       if(etapa==="confirmacao"){
