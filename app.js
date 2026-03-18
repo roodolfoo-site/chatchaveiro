@@ -1,5 +1,5 @@
 // ⚠️ CONFIG
-const CHAVE_PIX = "11940571781"
+const CHAVE_PIX = "74a7af2b-d2ea-4a9d-b038-f1d286803155"
 
 const messages = document.getElementById("messages")
 const input = document.getElementById("text")
@@ -15,7 +15,7 @@ let cliente = {
 
 let etapa = "inicio"
 
-const tecnicoFixo = { nome: "Antonio Carlos" }
+const tecnicoFixo = { nome: "José Michel" }
 
 const tempos = [
   "15 a 20 minutos",
