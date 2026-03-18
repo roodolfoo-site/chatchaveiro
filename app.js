@@ -179,16 +179,15 @@ function mostrarPix(valor){
   <div style="text-align:center">
 
     <div style="margin-bottom:8px;font-weight:600">
-      Pagamento via PIX
+      Envio imediato via PIX
     </div>
 
     <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${payload}" 
     style="border-radius:10px;margin-bottom:10px;">
 
     <div style="margin-bottom:8px;font-size:14px">
-      Esse tipo de serviço normalmente custa entre <b>R$120 e R$250</b>.<br><br>
-      No seu caso: <b>R$${valor}</b><br>
-      Para o deslocamento: <b>R$${metade}</b>
+      Valor do serviço: <b>R$${valor}</b><br>
+      Para deslocamento: <b>R$${metade}</b>
     </div>
 
     <div style="background:#f2f2f2;padding:8px;border-radius:8px;font-size:12px;word-break:break-all;margin-bottom:8px">
@@ -230,7 +229,6 @@ async function send(){
   addUserMessage(texto)
   input.value = ""
 
-  // 🔥 CORREÇÃO DO VALOR (AQUI)
   if(ehDuvida(texto)){
 
     const t = texto.toLowerCase()
@@ -248,16 +246,6 @@ async function send(){
       addBotMessage(resposta)
     }
 
-    setTimeout(()=>{
-      if(etapa==="confirmacao"){
-        addBotMessage("Posso reservar para o técnico ir até você?")
-      }
-
-      if(etapa==="telefone"){
-        addBotMessage("Já estou verificando um técnico próximo pra você 👍")
-      }
-    },1500)
-
     return
   }
 
@@ -266,11 +254,11 @@ async function send(){
     cliente.problema = texto
     cliente.valor = definirValor(texto)
 
-    const resposta = await respostaIA(texto)
-    addBotMessage(resposta)
+    addBotMessage("Atendimento Chaveiro 24h 🔐\nMais de 5 anos atendendo São Paulo\nTécnicos próximos da sua região")
 
-    setTimeout(()=>{
-      addBotMessage("Já vou verificar um técnico próximo pra você 👍")
+    setTimeout(async ()=>{
+      const resposta = await respostaIA(texto)
+      addBotMessage(resposta)
     },800)
 
     setTimeout(()=>{
@@ -283,20 +271,19 @@ async function send(){
 
   if(etapa==="endereco"){
 
-    if(!texto.match(/\d+/) || texto.split(" ").length < 3){
-      addBotMessage("Preciso da rua, número e bairro pra localizar o técnico mais próximo com precisão 👍")
-      return
-    }
-
     cliente.endereco = texto
 
-    setTimeout(()=>{
-      addBotMessage("Perfeito 👍")
-    },800)
+    if(texto.includes("-")){
+      cliente.bairro = texto.split("-")[1].trim()
+    } else {
+      cliente.bairro = "sua região"
+    }
+
+    addBotMessage("Perfeito 👍")
 
     setTimeout(()=>{
       addBotMessage("Qual é o seu nome?")
-    },1600)
+    },1200)
 
     etapa="nome"
     return
@@ -306,13 +293,11 @@ async function send(){
 
     cliente.nome = texto
 
-    setTimeout(()=>{
-      addBotMessage(`Prazer ${cliente.nome} 👍`)
-    },800)
+    addBotMessage(`Prazer ${cliente.nome} 👍`)
 
     setTimeout(()=>{
       addBotMessage("Me passa seu telefone pra contato rápido 📞")
-    },1600)
+    },1200)
 
     etapa="telefone"
     return
@@ -329,12 +314,12 @@ async function send(){
     addBotMessage("Só um instante que estou verificando aqui 👍")
 
     setTimeout(()=>{
-      addBotMessage(`Já encontrei um técnico disponível 👍`)
+      addBotMessage(`Já encontrei um técnico próximo do ${cliente.bairro} 👍`)
     },1500)
 
     setTimeout(()=>{
       addBotImage(`✔ Técnico disponível<br><br>Nome: ${tecnicoFixo.nome}<br>Chegada: ${tempo}`)
-    },3200)
+    },3000)
 
     setTimeout(()=>{
       addBotMessage("Posso reservar agora pra ele ir até você?")
@@ -353,20 +338,24 @@ async function send(){
       addBotMessage("Perfeito 👍 já vou garantir ele pra você")
 
       setTimeout(()=>{
-        addBotMessage("Pra deslocar o técnico e evitar cancelamentos, é feito 50% antecipado 👍")
+        addBotMessage("O restante é pago somente após o serviço, pode ficar tranquilo 👍")
       },1500)
 
       setTimeout(()=>{
-        addBotMessage("E esse valor já é abatido do total depois, pode ficar tranquilo 👍")
+        mostrarPix(cliente.valor)
       },3000)
 
       setTimeout(()=>{
-        mostrarPix(cliente.valor)
+        addBotMessage("Me envia o comprovante que já libero o técnico imediatamente 👍")
       },4500)
 
       setTimeout(()=>{
-        addBotMessage("Assim que me enviar o comprovante, já libero ele imediatamente 👍")
-      },6500)
+        addBotMessage("Estou segurando o técnico aqui pra você, só aguardando o envio 🙏")
+      },15000)
+
+      setTimeout(()=>{
+        addBotMessage("Conseguiu fazer o envio? Ele ainda está disponível 👍")
+      },30000)
 
       etapa="aguardando_pagamento"
       return
