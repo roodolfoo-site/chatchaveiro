@@ -208,101 +208,6 @@ async function send(){
   addUserMessage(texto)
   input.value = ""
 
-  if(ehDuvida(texto)){
-    const t = texto.toLowerCase()
-
-    if(t.includes("quanto") || t.includes("valor") || t.includes("preço")){
-      addBotMessage(`No seu caso, o valor fica em R$${cliente.valor} 👍`)
-
-      setTimeout(()=>{
-        addBotMessage(`Para o deslocamento, é R$${cliente.valor/2}`)
-      },1200)
-    }else{
-      const resposta = await respostaIA(texto)
-      addBotMessage(resposta)
-    }
-
-    return
-  }
-
-  if(etapa==="inicio"){
-
-    cliente.problema = texto
-    cliente.valor = definirValor(texto)
-
-    setTimeout(()=>{
-      addBotMessage("Isso acontece bastante, mas fica tranquilo que a gente resolve sem danificar 👍")
-    },1200)
-
-    setTimeout(()=>{
-      addBotMessage("Me passa seu endereço completo (rua, número e bairro)")
-    },2500)
-
-    etapa="endereco"
-    return
-  }
-
-  if(etapa==="endereco"){
-    cliente.endereco = texto
-
-    if(texto.includes("-")){
-      cliente.bairro = texto.split("-")[1].trim()
-    } else {
-      cliente.bairro = "sua região"
-    }
-
-    addBotMessage("Perfeito 👍")
-
-    setTimeout(()=>{
-      addBotMessage("Qual é o seu nome?")
-    },1200)
-
-    etapa="nome"
-    return
-  }
-
-  if(etapa==="nome"){
-    cliente.nome = texto
-
-    addBotMessage(`Prazer ${cliente.nome} 👍`)
-
-    setTimeout(()=>{
-      addBotMessage("Me passa seu telefone pra contato rápido 📞")
-    },1200)
-
-    etapa="telefone"
-    return
-  }
-
-  if(etapa==="telefone"){
-    cliente.telefone = texto
-
-    enviarLead()
-
-    const tempo = tempos[Math.floor(Math.random()*tempos.length)]
-
-    addBotMessage("Só um instante que estou verificando aqui 👍")
-
-    setTimeout(()=>{
-      addBotMessage(`Já encontrei um técnico próximo do ${cliente.bairro} 👍`)
-    },1500)
-
-    setTimeout(()=>{
-      addBotImage(`✔ Técnico disponível<br><br>Nome: ${tecnicoFixo.nome}<br>Chegada: ${tempo}<br>Valor do serviço: R$${cliente.valor}`)
-    },3000)
-
-    setTimeout(()=>{
-      addBotMessage("Para deslocamento do técnico e evitar cancelamentos, é necessário um sinal de 50% do valor 👍")
-    },4200)
-
-    setTimeout(()=>{
-      addBotMessage("Posso reservar agora pra ele ir até você?")
-    },6500)
-
-    etapa="confirmacao"
-    return
-  }
-
   if(etapa==="confirmacao"){
     const msg = texto.toLowerCase()
 
@@ -322,13 +227,14 @@ async function send(){
         addBotMessage("Me envia o comprovante que já libero o técnico imediatamente 👍")
       },4500)
 
+      // 🔥 ALTERADO APENAS TEMPO
       setTimeout(()=>{
         addBotMessage("Estou segurando o técnico aqui pra você, só aguardando o envio 🙏")
-      },15000)
+      },40000)
 
       setTimeout(()=>{
         addBotMessage("Conseguiu fazer o envio? Ele ainda está disponível 👍")
-      },30000)
+      },60000)
 
       etapa="aguardando_pagamento"
       return
