@@ -70,10 +70,8 @@ async function respostaIA(texto){
   }
 }
 
-/* 🔥 DETECTA DÚVIDA MELHORADA */
 function ehDuvida(texto){
   const t = texto.toLowerCase()
-
   return (
     t.includes("quanto") ||
     t.includes("valor") ||
@@ -97,7 +95,6 @@ function scrollChat(){
   messages.scrollTop = messages.scrollHeight
 }
 
-/* DIGITANDO */
 function mostrarDigitando(){
   const msg = document.createElement("div")
   msg.className = "msg bot typing-msg"
@@ -111,9 +108,7 @@ function removerDigitando(el){
   if(el) el.remove()
 }
 
-/* BOT */
 async function addBotMessage(text){
-
   const digitando = mostrarDigitando()
 
   let base = 700
@@ -139,9 +134,7 @@ async function addBotMessage(text){
   scrollChat()
 }
 
-/* USER */
 function addUserMessage(text){
-
   const agora = Date.now()
   const tempoResposta = agora - ultimoTempoResposta
   ultimoTempoResposta = agora
@@ -166,9 +159,7 @@ function addBotImage(text){
   scrollChat()
 }
 
-/* PIX */
 function mostrarPix(valor){
-
   const metade = valor / 2
   const payload = CHAVE_PIX
 
@@ -220,7 +211,6 @@ function copiarPix(texto){
   alert("PIX copiado 👍")
 }
 
-/* ENVIO */
 async function send(){
 
   const texto = input.value.trim()
@@ -230,17 +220,14 @@ async function send(){
   input.value = ""
 
   if(ehDuvida(texto)){
-
     const t = texto.toLowerCase()
 
     if(t.includes("quanto") || t.includes("valor") || t.includes("preço")){
-      
       addBotMessage(`No seu caso, o valor fica em R$${cliente.valor} 👍`)
 
       setTimeout(()=>{
-        addBotMessage(`Para o deslocamento, é R$${cliente.valor/2} (já abatido depois)`)
+        addBotMessage(`Para o deslocamento, é R$${cliente.valor/2}`)
       },1200)
-
     }else{
       const resposta = await respostaIA(texto)
       addBotMessage(resposta)
@@ -254,23 +241,24 @@ async function send(){
     cliente.problema = texto
     cliente.valor = definirValor(texto)
 
-    addBotMessage("Atendimento Chaveiro 24h 🔐\nMais de 5 anos atendendo São Paulo\nTécnicos próximos da sua região")
+    // 🔥 ORDEM CORRETA (AUTORIDADE + APRESENTAÇÃO)
+    addBotMessage("Atendimento Chaveiro 24h 🔐\nMais de 5 anos atendendo São Paulo\nTécnicos próximos da sua região\n\nOlá 👋 Sou a Thais da central.")
 
-    setTimeout(async ()=>{
-      const resposta = await respostaIA(texto)
-      addBotMessage(resposta)
-    },800)
+    // 🔥 EXPLICAÇÃO ANTES
+    setTimeout(()=>{
+      addBotMessage("Isso acontece bastante, mas fica tranquilo que a gente resolve sem danificar 👍")
+    },1200)
 
+    // 🔥 DEPOIS ENDEREÇO
     setTimeout(()=>{
       addBotMessage("Me passa seu endereço completo (rua, número e bairro)")
-    },2000)
+    },2500)
 
     etapa="endereco"
     return
   }
 
   if(etapa==="endereco"){
-
     cliente.endereco = texto
 
     if(texto.includes("-")){
@@ -290,7 +278,6 @@ async function send(){
   }
 
   if(etapa==="nome"){
-
     cliente.nome = texto
 
     addBotMessage(`Prazer ${cliente.nome} 👍`)
@@ -304,7 +291,6 @@ async function send(){
   }
 
   if(etapa==="telefone"){
-
     cliente.telefone = texto
 
     enviarLead()
@@ -330,7 +316,6 @@ async function send(){
   }
 
   if(etapa==="confirmacao"){
-
     const msg = texto.toLowerCase()
 
     if(msg.includes("sim") || msg.includes("ok") || msg.includes("quero")){
@@ -364,10 +349,8 @@ async function send(){
     addBotMessage("Posso reservar para o técnico ir até você?")
     return
   }
-
 }
 
-/* ENTER */
 input.addEventListener("keydown",function(e){
   if(e.key==="Enter"){
     e.preventDefault()
