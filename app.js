@@ -291,9 +291,8 @@ async function send(){
       addBotImage(`✔ Técnico disponível<br><br>Nome: ${tecnicoFixo.nome}<br>Chegada: ${tempo}<br>Valor do serviço: R$${cliente.valor}`)
     },3000)
 
-    setTimeout(async ()=>{
-      const resposta = await respostaIA("explique de forma curta que é necessário 50% antecipado para deslocamento e evitar cancelamento")
-      addBotMessage(resposta)
+    setTimeout(()=>{
+      addBotMessage("Para deslocamento do técnico e evitar cancelamentos, é necessário um sinal de 50% do valor 👍")
     },4200)
 
     setTimeout(()=>{
