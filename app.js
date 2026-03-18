@@ -288,12 +288,17 @@ async function send(){
     },1500)
 
     setTimeout(()=>{
-      addBotImage(`✔ Técnico disponível<br><br>Nome: ${tecnicoFixo.nome}<br>Chegada: ${tempo}`)
+      addBotImage(`✔ Técnico disponível<br><br>Nome: ${tecnicoFixo.nome}<br>Chegada: ${tempo}<br>Valor do serviço: R$${cliente.valor}`)
     },3000)
+
+    setTimeout(async ()=>{
+      const resposta = await respostaIA("explique de forma curta que é necessário 50% antecipado para deslocamento e evitar cancelamento")
+      addBotMessage(resposta)
+    },4200)
 
     setTimeout(()=>{
       addBotMessage("Posso reservar agora pra ele ir até você?")
-    },4200)
+    },6500)
 
     etapa="confirmacao"
     return
