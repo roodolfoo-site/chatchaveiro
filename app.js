@@ -23,6 +23,9 @@ const tempos = [
   "20 a 30 minutos"
 ]
 
+// 🔥 CONTROLE DE COMPORTAMENTO
+let ultimoTempoResposta = Date.now()
+
 function definirValor(texto){
   const t = texto.toLowerCase()
 
@@ -112,7 +115,19 @@ function removerDigitando(el){
 async function addBotMessage(text){
 
   const digitando = mostrarDigitando()
-  const tempo = 700 + Math.random()*900
+
+  // 🔥 TEMPO DINÂMICO (ULTRA CONVERSÃO)
+  let base = 700
+
+  if(window.velocidadeCliente){
+    if(window.velocidadeCliente < 2000){
+      base = 400
+    } else if(window.velocidadeCliente > 6000){
+      base = 1200
+    }
+  }
+
+  const tempo = base + Math.random()*600
 
   await new Promise(r => setTimeout(r, tempo))
 
@@ -127,6 +142,14 @@ async function addBotMessage(text){
 
 /* USER */
 function addUserMessage(text){
+
+  // 🔥 CAPTA COMPORTAMENTO DO CLIENTE
+  const agora = Date.now()
+  const tempoResposta = agora - ultimoTempoResposta
+  ultimoTempoResposta = agora
+
+  window.velocidadeCliente = tempoResposta
+
   const msg = document.createElement("div")
   msg.className = "msg user"
   msg.innerHTML = text + `<div class="time">${hora()}</div>`
