@@ -209,9 +209,7 @@ async function send(){
   addUserMessage(texto)
   input.value = ""
 
-  // 🔥 IA RESPONDE DÚVIDA EM QUALQUER MOMENTO (SEM QUEBRAR FLUXO)
   if(ehDuvida(texto)){
-
     const resposta = await respostaIA(texto)
     addBotMessage(resposta)
 
@@ -299,12 +297,9 @@ async function send(){
       addBotMessage(`Já encontrei um técnico disponível 👍`)
     },2000)
 
+    // 🔥 ALTERAÇÃO AQUI (tempo junto na foto)
     setTimeout(()=>{
-      addBotMessage(`Ele chega em aproximadamente ${tempo}`)
-    },3500)
-
-    setTimeout(()=>{
-      addBotImage(`✔ Técnico disponível<br><br>Nome: ${tecnicoFixo.nome}`)
+      addBotImage(`✔ Técnico disponível<br><br>Nome: ${tecnicoFixo.nome}<br>Chegada: ${tempo}`)
     },5000)
 
     setTimeout(()=>{
